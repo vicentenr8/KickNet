@@ -34,6 +34,6 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 
-CMD sh -c " echo 'Installing dependencies...';composer install;echo 'Waiting for PostgreSQL to be ready...';until php bin/console doctrine:query:sql 'SELECT 1' > /dev/null 2>&1; do echo 'Database not ready. Retrying in 5 seconds...'; sleep 5; done; echo 'Creating database if it does not exist...';php bin/console doctrine:database:create --if-not-exists;echo 'Running migrations...';php bin/console doctrine:migrations:migrate --no-interaction;echo 'Starting Apache...';apache2-foreground"
+CMD sh -c " echo 'Installing dependencies...';composer install;composer require nelmio/cors-bundle;echo 'Waiting for PostgreSQL to be ready...';until php bin/console doctrine:query:sql 'SELECT 1' > /dev/null 2>&1; do echo 'Database not ready. Retrying in 5 seconds...'; sleep 5; done; echo 'Creating database if it does not exist...';php bin/console doctrine:database:create --if-not-exists;echo 'Running migrations...';php bin/console doctrine:migrations:migrate --no-interaction;echo 'Starting Apache...';apache2-foreground"
 
 
