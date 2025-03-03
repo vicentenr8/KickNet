@@ -1,0 +1,18 @@
+<div class="container">
+    <h2>Task List</h2>
+  
+    <input #taskInput type="text" placeholder="New task..." />
+    <button (click)="addTask(taskInput.value); taskInput.value = ''">Add Task</button>
+  
+    <ul *ngIf="tasks.length > 0; else noTasks">
+      <li *ngFor="let task of tasks">
+        <span [class.completed]="task.completed" (click)="toggleTask(task)">{{ task.title }}</span>
+        <button class="delete-btn" (click)="deleteTask(task.id)">❌</button>
+      </li>
+    </ul>
+  
+    <ng-template #noTasks>
+      <p>No tasks found.</p>
+    </ng-template>
+  </div>
+  

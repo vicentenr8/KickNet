@@ -49,7 +49,8 @@ services:
       - backend
     ports:
       - "4200:4200"
-    command: ["sh", "-c", "npm install && ng serve --host 0.0.0.0 --port 4200"]
+    command: ["sh", "-c", "npm install && ng serve --host 0.0.0.0 --poll 2000 --watch"]
+
 
 volumes:
   pgdata:
