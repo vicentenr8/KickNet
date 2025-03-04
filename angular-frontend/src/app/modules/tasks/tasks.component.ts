@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-
-import { Task } from '../../shared/interfaces/Task';
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../shared/services/task-service.service';
+import { Task } from '../../shared/interfaces/task';
 
 
 @Component({
