@@ -76,7 +76,3 @@ docker-compose down -v
 
 Para más información sobre **Symfony**, **Angular** o **PostgreSQL**, consulta sus respectivas documentaciones oficiales.
 
----
-
-¡Eso es todo! 🎓🚀 Ahora tienes una aplicación Symfony y Angular corriendo con Docker Compose.
-```
