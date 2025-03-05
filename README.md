@@ -1,4 +1,4 @@
-```markdown
+
 # 📚 Despliegue de una Aplicación Symfony y Angular con Docker Compose
 Este proyecto utiliza Docker y Docker Compose para desplegar una aplicación que incluye un backend Symfony, un frontend Angular y una base de datos PostgreSQL de manera rápida y sencilla.
 
@@ -16,7 +16,7 @@ docker --version
 ```
 ```bash
 docker-compose --version
-```
+
 
 ---
 
