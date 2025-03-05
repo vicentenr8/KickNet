@@ -73,15 +73,6 @@ docker-compose down -v
   ```bash
   docker-compose logs -f
   ```
-- Para acceder a la base de datos PostgreSQL dentro del contenedor:
-  ```bash
-  docker exec -it <nombre_del_contenedor_db> psql -U symfony
-  ```
-- Si necesitas instalar dependencias adicionales en el frontend o backend:
-  ```bash
-  docker exec -it angular_frontend npm install <package_name>
-  docker exec -it symfony_backend composer require <package_name>
-  ```
 
 Para más información sobre **Symfony**, **Angular** o **PostgreSQL**, consulta sus respectivas documentaciones oficiales.
 
