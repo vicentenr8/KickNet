@@ -9,15 +9,6 @@ Antes de comenzar, asegúrate de tener instalados en tu sistema:
 
 - [Docker](https://docs.docker.com/get-docker/)
 - [Docker Compose](https://docs.docker.com/compose/install/)
-
-Puedes verificar que están instalados ejecutando:
-```bash
-docker --version
-```
-```bash
-docker-compose --version
-
-
 ---
 
 ## 🚀 Instalación y Puesta en Marcha
