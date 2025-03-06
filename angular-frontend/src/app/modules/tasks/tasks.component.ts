@@ -2,11 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../shared/services/task-service.service';
 import { Task } from '../../shared/interfaces/task';
+import { RouterModule } from '@angular/router';
+
 
 
 @Component({
   selector: 'app-tasks',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './tasks.component.html',
   styleUrls: ['./tasks.component.scss']
 })

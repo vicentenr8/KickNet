@@ -76,3 +76,14 @@ docker-compose down -v
 
 Para más información sobre **Symfony**, **Angular** o **PostgreSQL**, consulta sus respectivas documentaciones oficiales.
 
+## Comandos útiles
+
+- Para acceder al contenedor del Frontend Angular:
+```
+  docker exec -it angular_frontend sh
+```
+
+- Para acceder al contenedor del Backend Symfony:
+```
+docker exec -it symfony_backend bash
+```
