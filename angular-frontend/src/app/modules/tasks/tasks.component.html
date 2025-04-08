@@ -1,31 +1,41 @@
-<button routerLink="/" class="bg-purple-300 text-gray-700 p-1 border border-dashed border-red-500">
-  Back
-</button>
+<!-- Botón Back -->
+<a routerLink="/" class="inline-block text-base text-pink-700 font-medium mt-4 ml-2 hover:text-pink-900 transition">
+  ← Back
+</a>
 
-<div class="container bg-yellow-200 p-10 border-l-8 border-r-8 border-dotted border-black">
-    <h2 class="bg-sky-50 text-xs text-gray-500 font-thin ml-10">Task List</h2>
+<!-- Contenedor principal -->
+<div class="bg-yellow-100 p-10 border border-yellow-300 rounded-lg max-w-2xl mx-auto space-y-6 shadow">
 
-    <input #taskInput type="text" placeholder="Write here..." 
-      class="w-1/3 p-1 border border-dashed border-blue-500 text-gray-300" />
-    <button (click)="addTask(taskInput.value); taskInput.value = ''" 
-      class="bg-orange-500 text-black text-xs p-1 border border-black ml-20">
-      Add?
+  <!-- Título -->
+  <h2 class="text-2xl font-semibold text-gray-800">📝 Task List</h2>
+
+  <!-- Formulario de tareas -->
+  <div class="flex space-x-4">
+    <input #taskInput type="text" placeholder="Write here..."
+      class="flex-1 border border-gray-500 rounded px-3 py-2 text-gray-800 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-300" />
+
+    <button (click)="addTask(taskInput.value); taskInput.value = ''"
+      class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded shadow cursor-pointer transition">
+      Add
     </button>
+  </div>
 
-    <ul *ngIf="tasks.length > 0; else noTasks" class="mt-5">
-      <li *ngFor="let task of tasks" 
-          class="flex justify-between p-1 bg-gray-50 border-b-4 border-green-500">
-        <span [class.completed]="task.completed" (click)="toggleTask(task)"
-          class="text-xs font-light text-red-700">
-          {{ task.title }}
-        </span>
-        <button (click)="deleteTask(task.id)" class="bg-red-200 text-gray-700 border border-dotted border-black p-0.5">
-          ❌
-        </button>
-      </li>
-    </ul>
+  <!-- Lista de tareas -->
+  <ul *ngIf="tasks.length > 0; else noTasks" class="space-y-2">
+    <li *ngFor="let task of tasks"
+      class="flex justify-between items-center bg-white rounded border border-green-200 p-3 shadow-sm">
+      <span (click)="toggleTask(task)" [class.line-through]="task.completed" [class.text-red-500]="task.completed"
+        class="text-gray-800 cursor-pointer hover:text-blue-600 transition">
+        {{ task.title }}
+      </span>
+      <button (click)="deleteTask(task.id)" class="text-red-500 hover:text-red-700 text-sm font-bold px-2">
+        ✕
+      </button>
+    </li>
+  </ul>
 
-    <ng-template #noTasks>
-      <p class="text-green-700 text-sm ml-10">Nothing here...</p>
-    </ng-template>
+  <!-- Mensaje cuando no hay tareas -->
+  <ng-template #noTasks>
+    <p class="text-gray-500 italic">Nothing here...</p>
+  </ng-template>
 </div>
