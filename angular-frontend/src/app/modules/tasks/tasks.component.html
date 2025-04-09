@@ -1,41 +1,62 @@
-<!-- Botón Back -->
-<a routerLink="/" class="inline-block text-base text-pink-700 font-medium mt-4 ml-2 hover:text-pink-900 transition">
-  ← Back
-</a>
+<!-- Fondo con mismo gradiente que Landing -->
+<div class="min-h-screen bg-gradient-to-br from-green-100 via-blue-100 to-purple-100 p-6">
 
-<!-- Contenedor principal -->
-<div class="bg-yellow-100 p-10 border border-yellow-300 rounded-lg max-w-2xl mx-auto space-y-6 shadow">
+  <!-- Botón Back estilo botón -->
+  <a routerLink="/" class="inline-block text-sm font-medium text-pink-600 bg-pink-300 hover:bg-pink-200 px-4 py-2 rounded shadow transition mb-6">
+    Back
+  </a>
 
-  <!-- Título -->
-  <h2 class="text-2xl font-semibold text-gray-800">📝 Task List</h2>
+  <!-- Tarjeta principal -->
+  <div class="bg-white max-w-xl mx-auto p-8 rounded-2xl shadow-lg space-y-6 border border-gray-200">
 
-  <!-- Formulario de tareas -->
-  <div class="flex space-x-4">
-    <input #taskInput type="text" placeholder="Write here..."
-      class="flex-1 border border-gray-500 rounded px-3 py-2 text-gray-800 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-300" />
+    <!-- Título -->
+    <h2 class="text-3xl font-bold text-gray-800 flex items-center gap-2">
+      📝 Task List
+    </h2>
 
-    <button (click)="addTask(taskInput.value); taskInput.value = ''"
-      class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded shadow cursor-pointer transition">
-      Add
-    </button>
-  </div>
-
-  <!-- Lista de tareas -->
-  <ul *ngIf="tasks.length > 0; else noTasks" class="space-y-2">
-    <li *ngFor="let task of tasks"
-      class="flex justify-between items-center bg-white rounded border border-green-200 p-3 shadow-sm">
-      <span (click)="toggleTask(task)" [class.line-through]="task.completed" [class.text-red-500]="task.completed"
-        class="text-gray-800 cursor-pointer hover:text-blue-600 transition">
-        {{ task.title }}
-      </span>
-      <button (click)="deleteTask(task.id)" class="text-red-500 hover:text-red-700 text-sm font-bold px-2">
-        ✕
+    <!-- Input + botón -->
+    <div class="flex gap-4">
+      <input
+        #taskInput
+        type="text"
+        placeholder="Write a task..."
+        class="flex-1 px-4 py-2 rounded-md border border-gray-300 placeholder-gray-400 text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition"
+      />
+      <button
+        (click)="addTask(taskInput.value); taskInput.value = ''"
+        class="bg-amber-500 hover:bg-amber-600 text-white font-semibold px-5 py-2 rounded-md shadow transition disabled:opacity-50"
+      >
+        Add
       </button>
-    </li>
-  </ul>
+    </div>
 
-  <!-- Mensaje cuando no hay tareas -->
-  <ng-template #noTasks>
-    <p class="text-gray-500 italic">Nothing here...</p>
-  </ng-template>
+    <!-- Lista -->
+    <ul *ngIf="tasks.length > 0; else noTasks" class="space-y-3">
+      <li
+        *ngFor="let task of tasks"
+        class="bg-gray-50 p-3 rounded-md border border-gray-200 flex justify-between items-center shadow-sm"
+      >
+        <span
+          (click)="toggleTask(task)"
+          [class.line-through]="task.completed"
+          [class.text-red-500]="task.completed"
+          class="cursor-pointer text-gray-800 hover:text-blue-600 transition"
+        >
+          {{ task.title }}
+        </span>
+        <button
+          (click)="deleteTask(task.id)"
+          class="text-red-500 hover:text-red-700 font-bold text-sm px-2"
+        >
+          ✗
+        </button>
+      </li>
+    </ul>
+
+    <!-- Si no hay tareas -->
+    <ng-template #noTasks>
+      <p class="text-gray-400 italic">Nothing here...</p>
+    </ng-template>
+
+  </div>
 </div>
