@@ -94,3 +94,26 @@ sudo chmod 775 -R (contenedor_de_Symfony_o_Angular_frontend)
 Ej:
 sudo chmod 775 -R angular-frontend
 ```
+---
+
+## 📡 Endpoints de la API (Symfony)
+
+La API expone endpoints REST para gestionar tareas. Las respuestas incluyen el campo `createdAt` con la **fecha de creación de cada tarea**, en formato `dd/mm/yyyy HH:MM`.
+
+---
+
+### 📥 `GET /api/tasks`
+
+**Descripción:** Lista todas las tareas existentes.
+
+**Respuesta de ejemplo:**
+
+```json
+[
+  {
+    "id": 1,
+    "title": "Estudiar Angular",
+    "completed": false,
+    "createdAt": "11/04/2025 13:01"
+  }
+]
