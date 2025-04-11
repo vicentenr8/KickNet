@@ -112,21 +112,3 @@ La API expone endpoints REST para gestionar tareas. Las respuestas incluyen el c
 | DELETE | `/api/tasks/{id}`            | Elimina una tarea                           |
 | PUT    | `/api/tasks/complete-all`    | Marca todas las tareas como completadas     |
 | GET    | `/api/tasks/ordered?order=X` | Lista tareas ordenadas por ID (ASC o DESC)  |
-
----
-
-### 📥 `GET /api/tasks`
-
-**Descripción:** Lista todas las tareas existentes.
-
-**Respuesta de ejemplo:**
-
-```json
-[
-  {
-    "id": 1,
-    "title": "Estudiar Angular",
-    "completed": false,
-    "createdAt": "11/04/2025 13:01"
-  }
-]
