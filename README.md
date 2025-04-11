@@ -102,6 +102,19 @@ La API expone endpoints REST para gestionar tareas. Las respuestas incluyen el c
 
 ---
 
+### 📋 Tabla Resumen de Endpoints
+
+| Método | Endpoint                     | Descripción                                 |
+|--------|------------------------------|---------------------------------------------|
+| GET    | `/api/tasks`                 | Lista todas las tareas                      |
+| POST   | `/api/tasks`                 | Crea una nueva tarea                        |
+| PUT    | `/api/tasks/{id}`            | Actualiza una tarea específica              |
+| DELETE | `/api/tasks/{id}`            | Elimina una tarea                           |
+| PUT    | `/api/tasks/complete-all`    | Marca todas las tareas como completadas     |
+| GET    | `/api/tasks/ordered?order=X` | Lista tareas ordenadas por ID (ASC o DESC)  |
+
+---
+
 ### 📥 `GET /api/tasks`
 
 **Descripción:** Lista todas las tareas existentes.
