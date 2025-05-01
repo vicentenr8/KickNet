@@ -3,7 +3,7 @@ services:
     build:
       context: ./symfony-backend
       dockerfile: ./docker/php/Dockerfile
-    container_name: symfony_backend
+    container_name: stronova_backend
     restart: unless-stopped
     working_dir: /var/www/app
     volumes:
@@ -36,12 +36,12 @@ services:
 
   db:
     image: postgres:13
-    container_name: symfony_postgres
+    container_name: stronova_postgres
     restart: always
     environment:
-      POSTGRES_USER: symfony
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: symfony_db
+      POSTGRES_USER: stronova_user
+      POSTGRES_PASSWORD: stronova_password
+      POSTGRES_DB: stronova_db
     ports:
       - "5432:5432"
     volumes:
@@ -55,7 +55,7 @@ services:
     build:
       context: ./angular-frontend
       dockerfile: Dockerfile
-    container_name: angular_frontend
+    container_name: stronova_frontend
     restart: always
     working_dir: /app
     volumes:
