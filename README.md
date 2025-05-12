@@ -1,114 +1,142 @@
+# 🍽️ Fray Melitón – Renovación Web y Sistema de Gestión
 
-# 📚 Despliegue de una Aplicación Symfony y Angular con Docker Compose
-Este proyecto utiliza Docker y Docker Compose para desplegar una aplicación que incluye un backend Symfony, un frontend Angular y una base de datos PostgreSQL de manera rápida y sencilla.
+Proyecto de rediseño completo para la web del restaurante **Fray Melitón**, con el objetivo de ofrecer una experiencia moderna, funcional e intuitiva tanto para los clientes como para el equipo de gestión.
+
+## Objetivo
+
+Transformar el sitio actual (WordPress) en una plataforma personalizada donde:
+
+- Los usuarios puedan:
+  - Consultar la carta actualizada sin necesidad de registrarse.
+  - Hacer reservas online de forma sencilla.
+  - Obtener información general del restaurante desde cualquier dispositivo.
+
+- Los administradores puedan:
+  - Gestionar reservas y disponibilidad.
+  - Editar la carta en tiempo real.
+  - Controlar todo desde un único panel de administración.
+
+- La carta esté siempre accesible mediante código QR desde las mesas o redes sociales.
 
 ---
 
-## 🛠️ Requisitos Previos
-Antes de comenzar, asegúrate de tener instalados en tu sistema:
+## ⚙️ Funcionalidades Principales
 
-- [Docker](https://docs.docker.com/get-docker/)
-- [Docker Compose](https://docs.docker.com/compose/install/)
+### 1. Landing Page Mejorada
+
+Inspirada en la actual página: [fraymeliton.es](https://fraymeliton.es)
+
+Secciones clave:
+
+- Quiénes somos / historia  
+- Carta dividida por categorías (entrantes, principales, postres, bebidas)  
+- Reservas online  
+- Horarios y contacto  
+- Mapa de ubicación  
+- Reseñas o testimonios  
+- Página dedicada a la carta (para uso con código QR)
+
 ---
 
-## 🚀 Instalación y Puesta en Marcha
+### 2. Gestión de Reservas
 
-### 1️⃣ Clonar el repositorio
-Ejecuta el siguiente comando para clonar el proyecto:
+#### Para clientes (sin login)
+
+- Reserva rápida con: nombre, email, teléfono, fecha, hora, nº de personas, comentarios.  
+- Confirmación automática por email.
+
+#### Para usuarios registrados
+
+- Ver historial de reservas.  
+- Editar o cancelar (hasta X días antes).  
+- Solicitud de soporte en caso de incidencias.
+
+#### Para administradores
+
+- Ver y gestionar todas las reservas desde el panel.  
+- Filtros por fecha, estado y nº de personas.  
+- Crear/modificar/cancelar reservas (incluso hechas en persona).
+
+---
+
+### 3. Gestión de Disponibilidad
+
+- Configurar horarios y franjas disponibles.  
+- Limitar nº de mesas o comensales por franja.  
+- Bloquear fechas especiales (festivos, vacaciones, eventos).
+
+---
+
+### 4. Carta Dinámica
+
+Uno de los puntos clave del sistema:
+
+- Carta cargada desde base de datos.  
+- Gestión total desde el panel: añadir, editar, ocultar platos.  
+- Opción de marcar platos como “no disponible”.  
+- Categorías personalizables (con menús especiales o por alérgenos).  
+- Siempre actualizada y visible para todos los usuarios.
+
+---
+
+### 5. Código QR para Carta
+
+- Generación automática de un QR que enlaza a la carta online.  
+- Escaneable desde mesas o redes sociales.  
+- Acceso directo a versión móvil sin descarga.
+
+---
+
+## 👥 Roles y Permisos
+
+| Rol                | Acciones disponibles                                              |
+|--------------------|-------------------------------------------------------------------|
+| Visitante          | Ver carta, reservar sin cuenta                                    |
+| Usuario registrado | Ver historial, editar y cancelar reservas                         |
+| Administrador      | Gestionar carta, reservas, disponibilidad, horarios, etc.         |
+
+---
+
+
+## ✅ Requisitos Funcionales
+
+### Para usuarios no registrados
+
+- Acceso libre a la carta.  
+- Realizar reservas sin crear cuenta.  
+- Consultar ubicación y contacto.
+
+### Para usuarios registrados
+
+- Gestionar reservas pasadas y futuras.
+
+### Para administradores
+
+- Modificar la carta en tiempo real.  
+- Gestionar reservas (todas).  
+- Configurar horarios y disponibilidad.
+
+---
+
+## 🔮 Mejoras Futuras
+
+- Notificaciones automáticas por email (ej: recordatorios de reserva).  
+- Estadísticas de demanda por plato y gestión de stock anticipada.  
+- Integración con Google Calendar.  
+- Chat de atención con rol de gestor de reservas.
+
+---
+
+## 🐳 Clonar y ejecutar con Docker
+
+### 📦 Clonar el Repositorio
+
 ```bash
-git clone git@github.com:campus-CodeArts/Onboarding-SymfAngular.git
-cd Onboarding-SymfAngular
+git clone git@github.com:CodeArts-Solutions/elephants-B-Fray-Meliton.git
 ```
 
-### 2️⃣ Levantar los contenedores
-Para iniciar los servicios en segundo plano, ejecuta:
+### Levantar los contenedores de Docker
+
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
-📌 **Nota:** La primera vez que inicies los servicios, puede tardar unos minutos en configurarse completamente.
-
-### 3️⃣ Verificar que los contenedores están corriendo
-Comprueba el estado de los contenedores con:
-```bash
-docker ps
-```
-Deberías ver tres contenedores en ejecución: **PostgreSQL**, **Symfony (backend)** y **Angular (frontend)**.
-
-### 4️⃣ Acceder a la aplicación
-- **Frontend:** Abre la siguiente URL en tu navegador:
-  ```
-  http://localhost:4200
-  ```
-- **Backend (Symfony):** Puedes ver la salida de Symfony desde:
-  ```
-  http://localhost:8000
-  ```
-- **Base de datos PostgreSQL:** El contenedor de la base de datos está en el puerto 5432, aunque normalmente no es necesario acceder directamente a este servicio en un navegador.
-
----
-
-## 🔄 Detener y Reiniciar los Contenedores
-Si deseas detener los contenedores en ejecución:
-```bash
-docker-compose down
-```
-Para volver a iniciarlos:
-```bash
-docker-compose up -d
-```
-
----
-
-## 🧹 Eliminar los Contenedores y Datos Persistentes
-Si quieres eliminar los contenedores junto con los volúmenes y datos almacenados:
-```bash
-docker-compose down -v
-```
-⚠️ **Advertencia:** Esto eliminará todos los datos almacenados en la base de datos PostgreSQL.
-
----
-
-## 🎯 Notas Finales
-- Para ver los registros en tiempo real:
-  ```bash
-  docker-compose logs -f
-  ```
-
-Para más información sobre **Symfony**, **Angular** o **PostgreSQL**, consulta sus respectivas documentaciones oficiales.
-
-## Comandos útiles
-
-- Para acceder al contenedor del Frontend Angular:
-```
-  docker exec -it angular_frontend sh
-```
-
-- Para acceder al contenedor del Backend Symfony:
-```
-docker exec -it symfony_backend bash
-```
-- Si no tienes problemas de permisos para levantar un contenedor, prueba a ejecutar el siguiente comando:
-
-```
-sudo chmod 775 -R (contenedor_de_Symfony_o_Angular_frontend)
-Ej:
-sudo chmod 775 -R angular-frontend
-```
----
-
-## 📡 Endpoints de la API (Symfony)
-
-La API expone endpoints REST para gestionar tareas. Las respuestas incluyen el campo `createdAt` con la **fecha de creación de cada tarea**, en formato `dd/mm/yyyy HH:MM`.
-
----
-
-### 📋 Tabla Resumen de Endpoints
-
-| Método | Endpoint                     | Descripción                                 |
-|--------|------------------------------|---------------------------------------------|
-| GET    | `/api/tasks`                 | Lista todas las tareas                      |
-| POST   | `/api/tasks`                 | Crea una nueva tarea                        |
-| PUT    | `/api/tasks/{id}`            | Actualiza una tarea específica              |
-| DELETE | `/api/tasks/{id}`            | Elimina una tarea                           |
-| PUT    | `/api/tasks/complete-all`    | Marca todas las tareas como completadas     |
-| GET    | `/api/tasks/ordered?order=X` | Lista tareas ordenadas por ID (ASC o DESC)  |
