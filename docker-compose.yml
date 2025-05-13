@@ -12,7 +12,7 @@ services:
       db:
         condition: service_healthy
     ports:
-      - "8000:8000"
+      - "8880:8000"
     command: >
       bash -c "
         until pg_isready -h db -U symfony -d symfony_db; do
@@ -39,11 +39,11 @@ services:
     container_name: stronova_postgres
     restart: always
     environment:
-      POSTGRES_USER: stronova_user
-      POSTGRES_PASSWORD: stronova_password
-      POSTGRES_DB: stronova_db
+      POSTGRES_USER: kicknetApp
+      POSTGRES_PASSWORD: kicknet
+      POSTGRES_DB: kicknet_db
     ports:
-      - "5432:5432"
+      - "5551:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -64,7 +64,7 @@ services:
     depends_on:
       - backend
     ports:
-      - "4200:4200"
+      - "4250:4200"
     command: ["sh", "-c", "npm install && ng serve --host 0.0.0.0 --poll 2000 --watch"]
 
 
