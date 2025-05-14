@@ -9,5 +9,23 @@ import { CommonModule } from '@angular/common';
   //styleUrl: './landing.component.css' // Opcional: si tiene estilos
 })
 export class LandingComponent {
-  // Aquí va la lógica del componente
+  isModalOpen = false;
+  isSignUpModalOpen = false;
+
+  openModal() {
+    this.isModalOpen = true;
+  }
+
+  closeModal() {
+    this.isModalOpen = false;
+  }
+
+  openSignUpModal() {
+    this.isSignUpModalOpen = true;
+    this.isModalOpen = false; // Cierra el modal de inicio de sesión
+  }
+
+  closeSignUpModal() {
+    this.isSignUpModalOpen = false;
+  }
 }
