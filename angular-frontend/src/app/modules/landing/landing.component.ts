@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router'; // Importa Router
 
 @Component({
   selector: 'app-landing', // Selector corregido
   standalone: true,
-  imports: [CommonModule], // Importa CommonModule
+  imports: [CommonModule, RouterModule], // Importa CommonModule
   templateUrl: './landing.component.html', // Apunta a su propio HTML
   //styleUrl: './landing.component.css' // Opcional: si tiene estilos
 })

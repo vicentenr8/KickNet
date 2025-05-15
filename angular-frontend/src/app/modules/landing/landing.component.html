@@ -13,7 +13,7 @@
 
       <h2 class="text-xl md:text-2xl font-bold mb-4">Únete Hoy</h2>
 
-      <button class="w-full py-3 rounded-full bg-blue-500 hover:bg-blue-600 transition-colors mb-4 font-semibold" (click)="openSignUpModal()">
+      <button class="w-full py-3 rounded-full bg-blue-500 hover:bg-blue-600 transition-colors mb-4 font-semibold cursor-pointer" (click)="openSignUpModal()">
         Crear cuenta
       </button>
 
@@ -25,7 +25,7 @@
       <p class="mt-4 text-xl font-bold md:text-xl">
         ¿Ya tienes una cuenta?
       </p>
-        <button class="w-full py-3 rounded-full bg-blue-500 hover:bg-blue-600 transition-colors mt-4 font-semibold" (click)="openModal()">
+        <button class="w-full py-3 rounded-full bg-blue-500 hover:bg-blue-600 transition-colors mt-4 font-semibold cursor-pointer" (click)="openModal()">
           Iniciar Sesión
         </button>
     </div>
@@ -61,7 +61,7 @@
         class="w-full p-2 border rounded mb-6 placeholder-gray-500 border-gray-500 focus:outline-none focus:ring-3 focus:ring-blue-500"
         placeholder="Contraseña"
       />
-      <button class="w-full py-3 rounded-full bg-white text-black cursor-pointer hover:bg-white/60 transition-colors mt-4 font-semibold">
+      <button [routerLink]="['/home']" class="w-full py-3 rounded-full bg-white text-black cursor-pointer hover:bg-white/60 transition-colors mt-4 font-semibold">
         Iniciar Sesión
       </button>
       <button class="w-full py-3 rounded-full border border-white bg-black text-white cursor-pointer hover:bg-white/60 transition-colors mt-4 font-semibold">
