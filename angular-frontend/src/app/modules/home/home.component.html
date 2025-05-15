@@ -10,33 +10,29 @@
         <div class="border-y border-gray-800 flex flex-col py-4 min-h-[120px]">
             <div class="flex items-start">
                 <img src="X(isco).jpeg" alt="avatar" class="w-12 h-12 rounded-full ml-4 mt-3" />
-                <textarea name="paraTi" id="" placeholder="¿Que está pasando?"
+                <textarea [(ngModel)]="mensagges"  name="paraTi" id="" placeholder="¿Que está pasando?"
                     class="flex-1 resize-none border-none focus:outline-none text-xl placeholder-gray-400 placeholder:text-xl ml-4 mt-4"></textarea>
             </div>
             <button
+                (click)="publish()"
                 class="bg-white text-black rounded-full px-4 py-2 mt-4 mr-4 self-end font-bold cursor-pointer hover:border-gray-800">
                 Publicar
             </button>
         </div>
         <!--Publicación -->
-        <div class="flex items-start p-4 border-b border-gray-700 text-white">
+        <div  *ngFor="let pub of publications" class="flex items-start p-4 border-b border-gray-700 text-white">
             <!-- Avatar de perfil -->
-            <img src="X(isco).jpeg" alt="Avatar de perfil" class="w-12 h-12 rounded-full mr-3" />
+            <img [src]="pub.profileImage" alt="Avatar de perfil" class="w-12 h-12 rounded-full mr-3" />
             <!-- Contenido del tuit -->
             <div class="flex-1">
                 <!-- Encabezado: nombre, verificado, usuario y hora -->
                 <div class="flex items-center">
-                    <span class="font-semibold">Xisco</span>
-                    <span class="ml-2 text-gray-400 text-sm">&#64;Xisco1999 · 2h</span>
+                    <span class="font-semibold">{{pub.name}}</span>
+                    <span class="ml-2 text-gray-400 text-sm">&#64;{{pub.username}} · {{tiempoTranscurrido(pub.date)}}</span>
                 </div>
                 <!-- Texto principal del tuit -->
                 <p class="text-white">
-                    ⚽ Dean Huijsen’s signing has made Xabi Alonso "smile".
-                </p>
-                <!-- Texto secundario del tuit -->
-                <p class="mt-2 text-white">
-                    Xabi Alonso contacted Huijsen and made it clear he'll be crucial to
-                    his project.
+                    {{pub.text}}
                 </p>
                 <!-- Botones de interacción -->
                 <div class="flex items-start gap-7 w-full mt-3">
