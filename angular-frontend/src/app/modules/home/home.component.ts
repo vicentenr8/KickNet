@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // Importa FormsModule para usar [(ngModel)]
+import { FixturesService } from '../fixtures/fixtures.service';
+import { FixturesComponent } from "../fixtures/fixtures.component";
 @Component({
   selector: 'app-home', // Selector corregido
   standalone: true,
-  imports: [CommonModule, FormsModule], // Importa CommonModule
+  imports: [CommonModule, FormsModule, FixturesComponent], // Importa CommonModule
   templateUrl: './home.component.html', // Apunta a su propio HTML
   //styleUrl: './landing.component.css' // Opcional: si tiene estilos
 })
