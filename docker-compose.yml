@@ -3,7 +3,7 @@ services:
     build:
       context: ./symfony-backend
       dockerfile: ./docker/php/Dockerfile
-    container_name: stronova_backend
+    container_name: stronova_
     restart: unless-stopped
     working_dir: /var/www/app
     volumes:
@@ -47,7 +47,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U symfony -d symfony_db"]
+      test: ["CMD-SHELL", "pg_isready kicknetApp -d kicknet_db"]
       interval: 10s
       retries: 5
 

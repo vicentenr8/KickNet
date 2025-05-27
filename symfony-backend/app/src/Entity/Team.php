@@ -27,19 +27,22 @@ class Team
     /**
      * @var Collection<int, Game>
      */
-    #[ORM\OneToMany(targetEntity: Game::class, mappedBy: 'team')]
-    private Collection $localTeam;
+  
+    #[ORM\OneToMany(targetEntity: Game::class, mappedBy: 'localTeam')]
+    private Collection $localGames;
 
     /**
      * @var Collection<int, Game>
      */
-    #[ORM\OneToMany(targetEntity: Game::class, mappedBy: 'teams')]
-    private Collection $awayTeam;
+  
+    #[ORM\OneToMany(targetEntity: Game::class, mappedBy: 'awayTeam')]
+    private Collection $awayGames;
 
     public function __construct()
     {
-        $this->localTeam = new ArrayCollection();
-        $this->awayTeam = new ArrayCollection();
+        
+        $this->localGames = new ArrayCollection();
+        $this->awayGames = new ArrayCollection(); 
     }
 
     public function getId(): ?int
@@ -86,27 +89,30 @@ class Team
     /**
      * @return Collection<int, Game>
      */
-    public function getLocalTeam(): Collection
+
+
+    public function getLocalGames(): Collection
     {
-        return $this->localTeam;
+        return $this->localGames;
     }
 
-    public function addLocalTeam(Game $localTeam): static
+
+    public function addLocalGame(Game $localGame): static
     {
-        if (!$this->localTeam->contains($localTeam)) {
-            $this->localTeam->add($localTeam);
-            $localTeam->setTeam($this);
+        if (!$this->localGames->contains($localGame)) {
+            $this->localGames->add($localGame);
+            $localGame->setLocalTeam($this);
         }
 
         return $this;
     }
 
-    public function removeLocalTeam(Game $localTeam): static
+    public function removeLocalGame(Game $localGame): static
     {
-        if ($this->localTeam->removeElement($localTeam)) {
-            // set the owning side to null (unless already changed)
-            if ($localTeam->getTeam() === $this) {
-                $localTeam->setTeam(null);
+        if ($this->localGames->removeElement($localGame)) {
+            
+            if ($localGame->getLocalTeam() === $this) {
+                $localGame->setLocalTeam(null);
             }
         }
 
@@ -116,27 +122,30 @@ class Team
     /**
      * @return Collection<int, Game>
      */
-    public function getAwayTeam(): Collection
+
+    public function getAwayGames(): Collection
     {
-        return $this->awayTeam;
+        return $this->awayGames;
     }
 
-    public function addAwayTeam(Game $awayTeam): static
+    public function addAwayGame(Game $awayGame): static
     {
-        if (!$this->awayTeam->contains($awayTeam)) {
-            $this->awayTeam->add($awayTeam);
-            $awayTeam->setTeams($this);
+        if (!$this->awayGames->contains($awayGame)) {
+            $this->awayGames->add($awayGame);
+           
+            $awayGame->setAwayTeam($this);
         }
 
         return $this;
     }
 
-    public function removeAwayTeam(Game $awayTeam): static
+   
+    public function removeAwayGame(Game $awayGame): static
     {
-        if ($this->awayTeam->removeElement($awayTeam)) {
-            // set the owning side to null (unless already changed)
-            if ($awayTeam->getTeams() === $this) {
-                $awayTeam->setTeams(null);
+        if ($this->awayGames->removeElement($awayGame)) {
+        
+            if ($awayGame->getAwayTeam() === $this) {
+                $awayGame->setAwayTeam(null);
             }
         }
 

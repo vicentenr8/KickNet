@@ -22,11 +22,11 @@ class Game
 
     #[ORM\ManyToOne(inversedBy: 'localTeam')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Team $team = null;
+    private ?Team $localTeam = null;
 
     #[ORM\ManyToOne(inversedBy: 'awayTeam')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Team $teams = null;
+    private ?Team $awayTeam = null;
 
     public function getId(): ?int
     {
@@ -57,26 +57,26 @@ class Game
         return $this;
     }
 
-    public function getTeam(): ?Team
+    public function getLocalTeam(): ?Team
     {
-        return $this->team;
+        return $this->localTeam;
     }
 
-    public function setTeam(?Team $team): static
+    public function setLocalTeam(?Team $localTeam): static
     {
-        $this->team = $team;
+        $this->localTeam = $localTeam;
 
         return $this;
     }
 
-    public function getTeams(): ?Team
+    public function getAwayTeam(): ?Team
     {
-        return $this->teams;
+        return $this->awayTeam;
     }
 
-    public function setTeams(?Team $teams): static
+    public function setAwayTeam(?Team $awayTeam): static
     {
-        $this->teams = $teams;
+        $this->awayTeam = $awayTeam;
 
         return $this;
     }
