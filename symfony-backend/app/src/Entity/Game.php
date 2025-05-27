@@ -20,6 +20,14 @@ class Game
     #[ORM\Column(length: 60)]
     private ?string $competition = null;
 
+    #[ORM\ManyToOne(inversedBy: 'localTeam')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Team $team = null;
+
+    #[ORM\ManyToOne(inversedBy: 'awayTeam')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Team $teams = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -45,6 +53,30 @@ class Game
     public function setCompetition(string $competition): static
     {
         $this->competition = $competition;
+
+        return $this;
+    }
+
+    public function getTeam(): ?Team
+    {
+        return $this->team;
+    }
+
+    public function setTeam(?Team $team): static
+    {
+        $this->team = $team;
+
+        return $this;
+    }
+
+    public function getTeams(): ?Team
+    {
+        return $this->teams;
+    }
+
+    public function setTeams(?Team $teams): static
+    {
+        $this->teams = $teams;
 
         return $this;
     }
