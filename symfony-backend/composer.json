@@ -1,5 +1,6 @@
 {
     "require": {
-        "doctrine/doctrine-migrations-bundle": "^3.0"
+        "doctrine/doctrine-migrations-bundle": "^3.0",
+        "lexik/jwt-authentication-bundle": "^3.1"
     }
 }

@@ -47,7 +47,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready kicknetApp -d kicknet_db"]
+      test: ["CMD-SHELL", "pg_isready -U kicknetApp -d kicknet_db"]
       interval: 10s
       retries: 5
 

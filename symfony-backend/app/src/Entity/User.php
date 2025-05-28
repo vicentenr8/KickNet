@@ -7,10 +7,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
-class User
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -196,4 +198,25 @@ class User
 
         return $this;
     }
+
+    public function getRoles(): array
+    {
+        // By default, all users have the ROLE_USER role
+        return ['ROLE_USER'];
+    }
+    public function getSalt(): ?string
+    {
+        // Not needed for modern password hashing algorithms like bcrypt or argon2i
+        return null;
+    }
+    public function eraseCredentials(): void
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // This method is called when the user is logged out
+    }
+    public function getUserIdentifier(): string
+    {
+        // This method is used to get the unique identifier of the user
+        return (string) $this->email; // or $this->username, depending on your preference
+}
 }
