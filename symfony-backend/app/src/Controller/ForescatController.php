@@ -3,60 +3,68 @@
 namespace App\Controller;
 
 use App\Entity\Forecast;
+use App\Entity\Game;
 use App\Repository\ForecastRepository;
-use App\Repository\UserRepository;
+use App\Repository\GameRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/api/forecasts')]
+#[Route('/api/forecast', name: 'api_forecast_')]
 class ForecastController extends AbstractController
 {
-    #[Route('', name: 'forecast_list', methods: ['GET'])]
-    public function list(ForecastRepository $forecastRepository): JsonResponse
+    private $em;
+    private $forecastRepository;
+    private $gameRepository;
+
+    public function __construct(EntityManagerInterface $em, ForecastRepository $forecastRepository, GameRepository $gameRepository)
     {
-        $forecasts = $forecastRepository->findAll();
-
-        $data = [];
-        foreach ($forecasts as $forecast) {
-            $data[] = [
-                'id' => $forecast->getId(),
-                'result' => $forecast->getResult(),
-                'forecastDate' => $forecast->getForecastDate()->format('Y-m-d H:i:s'),
-                'user_id' => $forecast->getUsers()->getId(),
-            ];
-        }
-
-        return $this->json($data);
+        $this->em = $em;
+        $this->forecastRepository = $forecastRepository;
+        $this->gameRepository = $gameRepository;
     }
 
-    #[Route('', name: 'forecast_create', methods: ['POST'])]
-    public function create(Request $request, EntityManagerInterface $em, UserRepository $userRepository): JsonResponse
+    #[Route('', name: 'create', methods: ['POST'])]
+    public function create(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 
-        $user = $userRepository->find($data['user_id'] ?? null);
-        if (!$user) {
-            return $this->json(['error' => 'User not found'], 404);
+        // Validar campos mínimos
+        if (!isset($data['result'], $data['user_id'], $data['game_id'])) {
+            return $this->json(['error' => 'Campos requeridos faltantes'], 400);
         }
 
-        if (!isset($data['result'])) {
-            return $this->json(['error' => 'Result is required'], 400);
+        $game = $this->gameRepository->find($data['game_id']);
+        if (!$game) {
+            return $this->json(['error' => 'Partido no encontrado'], 404);
+        }
+
+        $user = $this->getDoctrine()->getRepository('App:User')->find($data['user_id']);
+        if (!$user) {
+            return $this->json(['error' => 'Usuario no encontrado'], 404);
         }
 
         $forecast = new Forecast();
         $forecast->setResult($data['result']);
-        $forecast->setForecastDate(new \DateTime()); // Fecha actual, o puedes aceptar una fecha del cliente si quieres
         $forecast->setUsers($user);
+        $forecast->setGame($game);
+        $forecast->setForecastDate(new \DateTime());
 
-        $em->persist($forecast);
-        $em->flush();
+        $this->em->persist($forecast);
+        $this->em->flush();
 
-        return $this->json([
-            'message' => 'Forecast created',
-            'id' => $forecast->getId()
-        ], 201);
+        return $this->json(['status' => 'Pronóstico guardado correctamente'], 201);
+    }
+
+    #[Route('', name: 'list', methods: ['GET'])]
+    public function list(): JsonResponse
+    {
+        $forecasts = $this->forecastRepository->findAll();
+        // Aquí puedes mapear y devolver solo lo que quieras
+
+        return $this->json($forecasts);
     }
 }
+?>

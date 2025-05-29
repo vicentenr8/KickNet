@@ -24,6 +24,10 @@ class Forecast
     #[ORM\JoinColumn(nullable: false)]
     private ?User $users = null;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Game $game = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -61,6 +65,17 @@ class Forecast
     public function setUsers(?User $users): static
     {
         $this->users = $users;
+
+        return $this;
+    }
+
+    public function getGame(): ?Game
+    {
+        return $this->game;
+    }
+    public function setGame(?Game $game): static
+    {
+        $this->game = $game;
 
         return $this;
     }
