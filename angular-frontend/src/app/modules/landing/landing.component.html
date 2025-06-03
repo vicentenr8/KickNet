@@ -32,88 +32,102 @@
   </div>
 </div>
 
-<!-- Modal -->
-<div
-  *ngIf="isModalOpen"
-  class="fixed inset-0 z-50 flex items-center justify-center bg-white/40 backdrop-blur-sm"
->
+<!-- Modal de Iniciar Sesión -->
+<div *ngIf="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-white/40 backdrop-blur-sm">
   <div class="bg-black text-white rounded-xl shadow-lg p-6 w-3/4 max-w-lg">
     <div class="relative">
-      <button
-        (click)="closeModal()"
-        class="absolute text-2xl cursor-pointer font-bold px-2.5 rounded-full transition-colors duration-300 hover:bg-gray-800"
-      >
-      x
-      </button>
+      <button (click)="closeModal()" class="absolute text-2xl cursor-pointer font-bold px-2.5 rounded-full transition-colors duration-300 hover:bg-gray-800">x</button>
     </div>
     <div class="flex justify-center mb-4">
       <img src="assets/logo-x.svg" alt="Logo Kicknet" class="w-10 h-10 md:w-10 md:h-10 lg:w-20 lg:h-20" />
     </div>
     <h2 class="text-3xl font-bold mb-8">Iniciar Sesión</h2>
-    <form>
+    <form (ngSubmit)="login()" #loginForm="ngForm">
       <input
         type="email"
+        name="loginEmail"
+        [(ngModel)]="loginEmail"
+        required
         class="w-full p-2 border border-gray-500 rounded mb-6 placeholder-gray-500 focus:outline-none focus:ring-3 focus:ring-blue-500"
         placeholder="Email"
       />
       <input
         type="password"
+        name="loginPassword"
+        [(ngModel)]="loginPassword"
+        required
         class="w-full p-2 border rounded mb-6 placeholder-gray-500 border-gray-500 focus:outline-none focus:ring-3 focus:ring-blue-500"
         placeholder="Contraseña"
       />
-      <button [routerLink]="['/home']" class="w-full py-3 rounded-full bg-white text-black cursor-pointer hover:bg-white/60 transition-colors mt-4 font-semibold">
+      <button
+        type="submit"
+        [disabled]="!loginForm.form.valid"
+        class="w-full py-3 rounded-full bg-white text-black cursor-pointer hover:bg-white/60 transition-colors mt-4 font-semibold"
+      >
         Iniciar Sesión
       </button>
-      <button class="w-full py-3 rounded-full border border-white bg-black text-white cursor-pointer hover:bg-white/60 transition-colors mt-4 font-semibold">
+      <button class="w-full py-3 rounded-full border border-white bg-black text-white cursor-pointer hover:bg-white/60 transition-colors mt-4 font-semibold" type="button">
         Olvidé mi contraseña
       </button>
     </form>
     <p class="text-center text-gray-400 mt-6">
-      ¿No tienes cuenta?  <a href="#" class="text-blue-500 underline" (click)="openSignUpModal()">Regístrate</a>
+      ¿No tienes cuenta?  
+      <a href="#" class="text-blue-500 underline" (click)="openSignUpModal()">Regístrate</a>
     </p>
   </div>
 </div>
 
 <!-- Modal de Crear Cuenta -->
-<div
-  *ngIf="isSignUpModalOpen"
-  class="fixed inset-0 z-50 flex items-center justify-center bg-white/40 backdrop-blur-sm"
->
+<div *ngIf="isSignUpModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-white/40 backdrop-blur-sm">
   <div class="bg-black text-white rounded-xl shadow-lg p-6 w-3/4 max-w-lg">
     <div class="relative">
-      <button
-        (click)="closeSignUpModal()"
-        class="absolute text-2xl cursor-pointer font-bold px-2.5 rounded-full transition-colors duration-300 hover:bg-gray-800"
-      >
-      x
-      </button>
+      <button (click)="closeSignUpModal()" class="absolute text-2xl cursor-pointer font-bold px-2.5 rounded-full transition-colors duration-300 hover:bg-gray-800">x</button>
     </div>
     <div class="flex justify-center mb-4">
       <img src="assets/logo-x.svg" alt="Logo Kicknet" class="w-10 h-10 md:w-10 md:h-10 lg:w-20 lg:h-20" />
     </div>
     <h2 class="text-3xl font-bold mb-8">Crear Cuenta</h2>
-    <form>
+    <form (ngSubmit)="register()" #registerForm="ngForm">
       <input
         type="text"
+        name="registerUsername"
+        [(ngModel)]="registerUsername"
+        required
         class="w-full p-2 border rounded mb-6 placeholder-gray-500 border-gray-500 focus:outline-none focus:ring-3 focus:ring-blue-500"
         placeholder="Nombre"
       />
       <input
         type="email"
+        name="registerEmail"
+        [(ngModel)]="registerEmail"
+        required
+        email
         class="w-full p-2 border border-gray-500 rounded mb-6 placeholder-gray-500 focus:outline-none focus:ring-3 focus:ring-blue-500"
         placeholder="Email"
       />
       <input
         type="password"
+        name="registerPassword"
+        [(ngModel)]="registerPassword"
+        required
+        minlength="6"
         class="w-full p-2 border rounded mb-6 placeholder-gray-500 border-gray-500 focus:outline-none focus:ring-3 focus:ring-blue-500"
         placeholder="Contraseña"
       />
       <input
         type="password"
+        name="registerPasswordConfirm"
+        [(ngModel)]="registerConfirmPassword"
+        required
+        minlength="6"
         class="w-full p-2 border rounded mb-6 placeholder-gray-500 border-gray-500 focus:outline-none focus:ring-3 focus:ring-blue-500"
         placeholder="Confirmar Contraseña"
       />
-      <button class="w-full py-3 rounded-full bg-white text-black cursor-pointer hover:bg-white-600 transition-colors mt-4 font-semibold">
+      <button
+        type="submit"
+        [disabled]="!registerForm.form.valid"
+        class="w-full py-3 rounded-full bg-white text-black cursor-pointer hover:bg-white/60 transition-colors mt-4 font-semibold"
+      >
         Crear Cuenta
       </button>
     </form>

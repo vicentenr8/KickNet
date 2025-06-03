@@ -13,12 +13,20 @@ import { FixturesComponent } from "../fixtures/fixtures.component";
 
 export class HomeComponent {
   mensagges: string = '';
-  publications: Publication[] = []
+  selectedImage: string | undefined = undefined;
+  publications: Publication[] = [];
+
   user = {
-    name: 'Xisco',
-    username: 'Xisco1999',
-    profileImage: 'X(isco).jpeg'
+    name: 'Visco',
+    username: 'Visco1999',
+    profileImage: '' // Si está vacío, se usa la inicial
   };
+
+  avatarColors = [
+    '#1abc9c', '#3498db', '#9b59b6',
+    '#e67e22', '#e74c3c', '#2ecc71', '#f1c40f'
+  ];
+
   publish = () => {
     if (this.mensagges.trim()) {
       this.publications.unshift({
@@ -26,33 +34,49 @@ export class HomeComponent {
         date: new Date(),
         name: this.user.name,
         username: this.user.username,
-        profileImage: this.user.profileImage
+        profileImage: this.user.profileImage,
+        image: this.selectedImage ?? undefined
       });
-      // Reinicia el campo de texto después de publicar
       this.mensagges = '';
+      this.selectedImage = undefined;
+    }
+  };
+
+  tiempoTranscurrido(date: Date): string {
+    const now = new Date();
+    const seconds = Math.floor((now.getTime() - new Date(date).getTime()) / 1000);
+    if (seconds < 60) return 'Justo ahora';
+    else if (seconds < 3600) return `${Math.floor(seconds / 60)} min`;
+    else if (seconds < 86400) return `${Math.floor(seconds / 3600)} h`;
+    else return `${Math.floor(seconds / 86400)} d`;
+  }
+
+  onImageSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => this.selectedImage = reader.result as string;
+      reader.readAsDataURL(file);
     }
   }
 
-    tiempoTranscurrido(date: Date): string {
-      const now = new Date();
-      const diference = now.getTime() - new Date(date).getTime(); // en ms
-      const seconds = Math.floor(diference / 1000);
-  
-      if (seconds < 60) {
-        return 'Justo Ahora';
-      } else if (seconds < 3600) {
-        const minutes = Math.floor(seconds / 60);
-        return minutes + (minutes === 1 ? ' minuto' : ' minutos');
-      } else if (seconds < 86400) {
-        const hours = Math.floor(seconds / 3600);
-        return hours + (hours === 1 ? ' hora' : ' horas');
-      } else {
-        const days = Math.floor(seconds / 86400);
-        return days + (days === 1 ? ' día' : ' días');
-      }
-    }
+  get characterCount(): number {
+    return this.mensagges.length;
   }
-  
+
+  get userInitial(): string {
+    return this.user.username.charAt(0).toUpperCase();
+  }
+
+  getAvatarColor(username: string): string {
+    let hash = 0;
+    for (let i = 0; i < username.length; i++) {
+      hash = username.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const index = Math.abs(hash) % this.avatarColors.length;
+    return this.avatarColors[index];
+  }
+}
 
 interface Publication {
   text: string;
@@ -60,6 +84,5 @@ interface Publication {
   name: string;
   username: string;
   profileImage: string;
+  image?: string;
 }
-
-

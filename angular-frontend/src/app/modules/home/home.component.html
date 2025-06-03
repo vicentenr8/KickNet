@@ -2,93 +2,89 @@
   class="min-h-screen flex flex-col lg:flex-row bg-black text-white md:flex-row"
 >
   <!--Sección Izquierda-->
-  <div class="hidden lg:flex w-full lg:w-2/12 flex-col mt-20">
-    <img src="assets.svg" alt="Kicknet" class="w-32 h-32" />
-    <div class="flex flex-col mt-4 gap-7">
-      <button class="cursor-pointer hover:border-gray-700">
-        <i class="fa-solid fa-house"></i
-        ><span class="font-semibold text-xl"> Home</span>
-      </button>
-      <button class="cursor-pointer hover:border-gray-700">
-        <i class="fa-solid fa-user"></i
-        ><span class="font-semibold text-xl"> Profile</span>
-      </button>
+  <aside class="hidden lg:flex lg:w-3/12 flex-col items-center p-6 border-r border-gray-800">
+    <div class="w-12 h-12 rounded-full bg-teal-600 flex items-center justify-center text-white font-bold text-xl mt-3">
+      {{ userInitial }}
+    </div>
+    <h2 class="text-xl font-semibold mt-4">Vicente Navas</h2>
+    <p class="text-gray-400">Vicente navas</p>
+    <div class="flex gap-4 mt-4 text-center">
+      <div>
+        <p class="font-bold">0</p>
+        <p class="text-sm text-gray-400">Siguiendo</p>
+      </div>
+      <div>
+        <p class="font-bold">0</p>
+        <p class="text-sm text-gray-400">Seguidores</p>
+      </div>
+    </div>
+
+  </aside>
+
+ <!-- Sección Central: Feed -->
+ <main class="w-full lg:w-6/12 border-x border-gray-800">
+  <!-- Publicar Contenido -->
+<div class="border-y border-gray-800 flex flex-col py-4 min-h-[120px]">
+  <div class="flex items-start px-4">
+    <div class="w-12 h-12 rounded-full bg-teal-600 flex items-center justify-center text-white font-bold text-xl mt-3">
+      {{ userInitial }}
+    </div>
+    <textarea
+      [(ngModel)]="mensagges"
+      placeholder="¿Qué está pasando?"
+      maxlength="200"
+      class="flex-1 resize-none bg-transparent border-none focus:outline-none text-xl placeholder-gray-400 ml-4 mt-4"
+    ></textarea>
+  </div>
+
+  <!-- Barra de herramientas -->
+  <div class="flex justify-between items-center px-4 mt-2">
+    <div>
+      <label for="imgUpload" class="cursor-pointer text-gray-500 hover:text-gray-300">
+        <i class="fa-regular fa-image text-xl"></i>
+        <input id="imgUpload" type="file" accept="image/*" (change)="onImageSelected($event)" class="hidden">
+      </label>
+    </div>
+    <div class="text-sm text-gray-400">
+      {{ characterCount }} / 200
     </div>
   </div>
-  <!--Sección Central-->
-  <!--Publicar Contenido-->
-  <div
-    class="sm:w-full md:w-8/12 lg:w-6/12 flex flex-col border-x-2 border-gray-800"
+
+  <!-- Imagen previa -->
+  <div *ngIf="selectedImage" class="p-4">
+    <img [src]="selectedImage" class="rounded-lg max-h-64 object-cover border border-gray-700" />
+  </div>
+
+  <button
+    (click)="publish()"
+    class="bg-white text-black rounded-full px-4 py-2 mt-2 mr-4 self-end font-bold hover:bg-gray-300"
   >
-    <h1
-      class="text-2xl font-bold ml-10 mt-10 mb-3 border-b-4 border-b-blue-500"
-    >
-      Para Ti
-    </h1>
-    <div class="border-y border-gray-800 flex flex-col py-4 min-h-[120px]">
-      <div class="flex items-start">
-        <img
-          src="X(isco).jpeg"
-          alt="avatar"
-          class="w-12 h-12 rounded-full ml-4 mt-3"
-        />
-        <textarea
-          [(ngModel)]="mensagges"
-          name="paraTi"
-          id=""
-          placeholder="¿Que está pasando?"
-          class="flex-1 resize-none border-none focus:outline-none text-xl placeholder-gray-400 placeholder:text-xl ml-4 mt-4"
-        ></textarea>
-      </div>
-      <button
-        (click)="publish()"
-        class="bg-white text-black rounded-full px-4 py-2 mt-4 mr-4 self-end font-bold cursor-pointer hover:border-gray-800"
-      >
-        Publicar
-      </button>
+    Publicar
+  </button>
+</div>
+
+<!-- Publicaciones -->
+<div *ngFor="let pub of publications" class="p-4 border-b border-gray-700">
+  <div class="flex items-start">
+    <div class="w-12 h-12 rounded-full bg-teal-600 flex items-center justify-center text-white font-bold text-xl">
+      {{ pub.name.charAt(0).toUpperCase() }}
     </div>
-    <!--Publicación -->
-    <div
-      *ngFor="let pub of publications"
-      class="flex items-start p-4 border-b border-gray-700 text-white"
-    >
-      <!-- Avatar de perfil -->
-      <img
-        [src]="pub.profileImage"
-        alt="Avatar de perfil"
-        class="w-12 h-12 rounded-full mr-3"
-      />
-      <!-- Contenido del tuit -->
-      <div class="flex-1">
-        <!-- Encabezado: nombre, verificado, usuario y hora -->
-        <div class="flex items-center">
-          <span class="font-semibold">{{ pub.name }}</span>
-          <span class="ml-2 text-gray-400 text-sm"
-            >&#64;{{ pub.username }} · {{ tiempoTranscurrido(pub.date) }}</span
-          >
-        </div>
-        <!-- Texto principal del tuit -->
-        <p class="text-white">
-          {{ pub.text }}
-        </p>
-        <!-- Botones de interacción -->
-        <div class="flex items-start gap-7 w-full mt-3">
-          <button
-            class="text-gray-400 hover:text-red-500 focus:outline-none cursor-pointer"
-          >
-            <i class="fas fa-heart"></i>
-          </button>
-          <button
-            class="text-gray-400 hover:text-blue-500 focus:outline-none cursor-pointer"
-          >
-            <i class="fas fa-comment"></i>
-          </button>
-        </div>
+    <div class="ml-3 flex-1">
+      <div class="text-sm text-white font-semibold">
+        {{ pub.name }} <span class="text-gray-500">{{ pub.username }} · {{ tiempoTranscurrido(pub.date) }}</span>
+      </div>
+      <p class="mt-1">{{ pub.text }}</p>
+      <img *ngIf="pub.image" [src]="pub.image" class="rounded-lg mt-3 max-h-64 object-cover border border-gray-700" />
+      <div class="flex items-center gap-5 mt-2 text-gray-400">
+        <i class="fa-regular fa-heart hover:text-red-500 cursor-pointer"></i>
+        <i class="fa-regular fa-comment hover:text-blue-500 cursor-pointer"></i>
       </div>
     </div>
   </div>
+</div>
+</main>
   <!--Sección Derecha-->
-  <div class="hidden lg:block w-full lg:w-4/12 p-6">
+  <div class="hidden lg:flex lg:w-3/12 flex-col p-6 space-y-6">
     <app-fixtures></app-fixtures>
   </div>
 </div>
