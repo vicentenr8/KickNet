@@ -23,8 +23,13 @@ class AuthController extends AbstractController
     }
 
     #[Route('/register', name: 'api_register', methods: ['POST'])]
-    public function register(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher, MailerService $mailerService, UrlGeneratorInterface $urlGenerator): JsonResponse
-    {
+    public function register(
+        Request $request,
+        EntityManagerInterface $em,
+        UserPasswordHasherInterface $passwordHasher,
+        MailerService $mailerService,
+        UrlGeneratorInterface $urlGenerator
+    ): JsonResponse {
         $data = json_decode($request->getContent(), true);
 
         if (!isset($data['username'], $data['email'], $data['password'])) {
@@ -57,12 +62,18 @@ class AuthController extends AbstractController
         $em->flush();
 
         // Enviar email con link de activación
-        $activationUrl = $urlGenerator->generate('api_verify_account', ['token' => $activationToken], UrlGeneratorInterface::ABSOLUTE_URL);
+        $activationUrl = $urlGenerator->generate(
+            'api_verify_account',
+            ['token' => $activationToken],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
 
         $mailerService->sendVerificationEmail($user->getEmail(), $activationUrl);
 
-        return new JsonResponse(['message' => 'User registered successfully. Check your email to activate your account.',
-                                'activationUrl' => $activationUrl], Response::HTTP_CREATED);
+        return new JsonResponse([
+            'message'       => 'User registered successfully. Check your email to activate your account.',
+            'activationUrl' => $activationUrl
+        ], Response::HTTP_CREATED);
     }
 
     #[Route('/verify-account/{token}', name: 'api_verify_account', methods: ['GET'])]
@@ -82,38 +93,47 @@ class AuthController extends AbstractController
     }
 
     #[Route('/login', name: 'api_login', methods: ['POST'])]
-    public function login(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher, JWTTokenManagerInterface $jwtManager): JsonResponse
-    {
+    public function login(
+        Request $request,
+        EntityManagerInterface $em,
+        UserPasswordHasherInterface $passwordHasher,
+        JWTTokenManagerInterface $jwtManager
+    ): JsonResponse {
         $data = json_decode($request->getContent(), true);
         $email = $data['email'] ?? null;
         $password = $data['password'] ?? null;
 
         if (!$email || !$password) {
-            return new JsonResponse(['error' => 'Email y contraseña requeridos'], 400);
+            return new JsonResponse(['error' => 'Email y contraseña requeridos'], Response::HTTP_BAD_REQUEST);
         }
 
         $user = $em->getRepository(User::class)->findOneBy(['email' => $email]);
         if (!$user) {
-            return new JsonResponse(['error' => 'Usuario no encontrado'], 404);
+            return new JsonResponse(['error' => 'Usuario no encontrado'], Response::HTTP_NOT_FOUND);
         }
 
         if (!$user->isVerified()) {
-            return new JsonResponse(['error' => 'Cuenta no activada. Revisa tu correo.'], 403);
+            return new JsonResponse(['error' => 'Cuenta no activada. Revisa tu correo.'], Response::HTTP_FORBIDDEN);
         }
 
         if (!$passwordHasher->isPasswordValid($user, $password)) {
-            return new JsonResponse(['error' => 'Contraseña incorrecta'], 401);
+            return new JsonResponse(['error' => 'Contraseña incorrecta'], Response::HTTP_UNAUTHORIZED);
         }
 
-        $token = $jwtManager->create($user);
+        // Creamos el payload para el JWT con "email" y "roles"
+        $payload = [
+            'email' => $user->getEmail(),
+            'roles' => $user->getRoles(),
+        ];
+        $token = $jwtManager->createFromPayload($user, $payload);
 
         return new JsonResponse([
             'message' => 'Login successful',
-            'token' => $token,
-            'user' => [
-                'id' => $user->getId(),
-                'email' => $user->getEmail(),
-                'username' => $user->getUsername()
+            'token'   => $token,
+            'user'    => [
+                'id'       => $user->getId(),
+                'email'    => $user->getEmail(),
+                'username' => $user->getUsername(),
             ]
         ]);
     }
