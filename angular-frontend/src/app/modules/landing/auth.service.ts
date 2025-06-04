@@ -30,6 +30,7 @@ export class AuthService {
   private loginUrl = 'http://localhost:8880/api/auth/login';
 
   private readonly USER_KEY = 'currentUser';
+   private readonly TOKEN_KEY = 'token'
 
   constructor(private http: HttpClient) {}
 
