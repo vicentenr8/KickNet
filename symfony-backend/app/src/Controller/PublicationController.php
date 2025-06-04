@@ -28,7 +28,6 @@ class PublicationController extends AbstractController
                 'id' => $publication->getId(),
                 'content' => $publication->getContent(),
                 'date' => $publication->getPublicationDate()->format('Y-m-d H:i:s'),
-                // Safely get user_id, use null if user is not set
                 'user_id' => $user ? $user->getId() : null,
                 'username' => $user ? $user->getUsername() : 'Usuario Desconocido',
                 'email' => $user ? $user->getEmail() : 'email@desconocido.com',
