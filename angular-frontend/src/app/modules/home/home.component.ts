@@ -97,28 +97,23 @@ export class HomeComponent {
   loadPublications() {
     this.publicationService.getPublications().subscribe({
       next: (response: any) => {
-        console.log('Publicaciones cargadas desde el backend:', response); // Para depuración
+        console.log('Publicaciones recibidas del backend:', response); // Para depuración
 
         // Mapea la respuesta a tu interfaz Publication
         this.publications = response.map((pub: any) => ({
           text: pub.content, // Contenido de la publicación
-          date: new Date(pub.date), // Fecha de creación
-          email: pub.user?.email || 'email@desconocido.com',
-          username: pub.user?.username || 'Usuario Desconocido',
-          image: pub.user?.profileImage || undefined, // Imagen de perfil del usuario (puede ser undefined)
+          date: new Date(pub.date), // Fecha de publicación (convierte a objeto Date)
+          email: pub.email || 'email@desconocido.com', // <-- Accede directamente a 'pub.email'
+          username: pub.username || 'Usuario Desconocido', // <-- Accede directamente a 'pub.username'
+          image: pub.image || '', // Imagen de la publicación (opcional)
+          user_id: pub.user_id,
         }));
+
+        console.log('Publicaciones mapeadas para el frontend:', this.publications); // Para depuración
       },
       error: (err) => {
         console.error('Error al cargar publicaciones:', err);
-        // Manejo de errores para el usuario
-        if (err.status === 401) {
-          alert('Tu sesión ha expirado o no estás autorizado para ver las publicaciones. Por favor, inicia sesión de nuevo.');
-          // Opcional: redirigir al login o desloguear al usuario
-          // this.authService.logout();
-          // this.router.navigate(['/login']);
-        } else {
-          alert('Hubo un error al cargar las publicaciones. Inténtalo de nuevo más tarde.');
-        }
+        // ... (resto del manejo de errores)
       },
     });
   }

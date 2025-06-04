@@ -23,17 +23,25 @@ class PublicationController extends AbstractController
         $data = [];
 
         foreach ($publications as $publication) {
+            $user = $publication->getUsers(); // Get the User object
             $data[] = [
                 'id' => $publication->getId(),
                 'content' => $publication->getContent(),
                 'date' => $publication->getPublicationDate()->format('Y-m-d H:i:s'),
-                'user_id' => $publication->getUsers()->getId(),
+                // Safely get user_id, use null if user is not set
+                'user_id' => $user ? $user->getId() : null,
+                'username' => $user ? $user->getUsername() : 'Usuario Desconocido',
+                'email' => $user ? $user->getEmail() : 'email@desconocido.com',
                 'comments' => array_map(function ($comment) {
+                    $commentUser = $comment->getUsers(); // Get the Comment's User object
                     return [
                         'id' => $comment->getId(),
                         'content' => $comment->getCommentContent(),
                         'date' => $comment->getCommentDate()->format('Y-m-d H:i:s'),
-                        'user_id' => $comment->getUsers()->getId(),
+                        // Safely get comment user_id
+                        'user_id' => $commentUser ? $commentUser->getId() : null,
+                        'username' => $commentUser ? $commentUser->getUsername() : 'Anónimo',
+                        'email' => $commentUser ? $commentUser->getEmail() : 'anonimo@ejemplo.com',
                     ];
                 }, $publication->getComments()->toArray())
             ];
