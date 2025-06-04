@@ -75,13 +75,10 @@ export class HomeComponent {
       },
       error: (err) => {
         console.error('Error al publicar', err);
-        // Puedes añadir lógica para manejar 401 aquí, por ejemplo:
         if (err.status === 401) {
           alert(
             'Tu sesión ha expirado o no estás autorizado. Por favor, inicia sesión de nuevo.'
           );
-          // this.authService.logout(); // Opcional: desloguear al usuario
-          // this.router.navigate(['/login']); // Opcional: redirigir al login
         } else {
           alert('Hubo un error al publicar. Inténtalo de nuevo.');
         }
@@ -101,11 +98,11 @@ export class HomeComponent {
 
         // Mapea la respuesta a tu interfaz Publication
         this.publications = response.map((pub: any) => ({
-          text: pub.content, // Contenido de la publicación
-          date: new Date(pub.date), // Fecha de publicación (convierte a objeto Date)
-          email: pub.email || 'email@desconocido.com', // <-- Accede directamente a 'pub.email'
-          username: pub.username || 'Usuario Desconocido', // <-- Accede directamente a 'pub.username'
-          image: pub.image || '', // Imagen de la publicación (opcional)
+          text: pub.content,
+          date: new Date(pub.date),
+          email: pub.email || 'email@desconocido.com',
+          username: pub.username || 'Usuario Desconocido', 
+          image: pub.image || '',
           user_id: pub.user_id,
         }));
 
