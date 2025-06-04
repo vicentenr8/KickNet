@@ -20,7 +20,7 @@ export class HomeComponent {
 
   user: User | null = null;
 
-  avatarColors = [
+ /* avatarColors = [
     '#1abc9c',
     '#3498db',
     '#9b59b6',
@@ -28,7 +28,7 @@ export class HomeComponent {
     '#e74c3c',
     '#2ecc71',
     '#f1c40f',
-  ];
+  ];*/
 
   constructor(
     private publicationService: PublicationService,
@@ -144,12 +144,40 @@ export class HomeComponent {
     return this.user.username.charAt(0).toUpperCase();
   }
 
-  getAvatarColor(username: string): string {
+ /* getAvatarColor(username: string): string {
     let hash = 0;
     for (let i = 0; i < username.length; i++) {
       hash = username.charCodeAt(i) + ((hash << 5) - hash);
     }
     const index = Math.abs(hash) % this.avatarColors.length;
+    return this.avatarColors[index];
+    
+  }*/
+}
+
+class AvatarGenerator {
+  avatarColors = [
+    '#1abc9c',
+    '#3498db',
+    '#9b59b6',
+    '#e67e22',
+    '#e74c3c',
+    '#2ecc71',
+    '#f1c40f',
+  ];
+
+  getAvatarColor(username: string): string {
+    let hash = 0;
+    for (let i = 0; i < username.length; i++) {
+      hash = username.charCodeAt(i) + ((hash << 5) - hash);
+    }
+
+    const absHash = Math.abs(hash);
+    const index = absHash % this.avatarColors.length;
+
+    console.log(`Hash: ${hash}, Abs Hash: ${absHash}, Index: ${index}`);
+
+
     return this.avatarColors[index];
   }
 }
