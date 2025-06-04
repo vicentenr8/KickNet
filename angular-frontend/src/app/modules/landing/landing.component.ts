@@ -46,7 +46,7 @@ export class LandingComponent {
         next: (res) => {
           alert('Login exitoso');
           console.log('Login exitoso', res);
-          localStorage.setItem('token', res.token);  // Guardar token
+          localStorage.setItem('token', res.token ?? '');  // Guardar token
           this.closeModal();
           this.router.navigate(['/home']);  // Redirigir a /home
         },

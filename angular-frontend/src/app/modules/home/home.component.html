@@ -6,8 +6,8 @@
     <div class="w-12 h-12 rounded-full bg-teal-600 flex items-center justify-center text-white font-bold text-xl mt-3">
       {{ userInitial }}
     </div>
-    <h2 class="text-xl font-semibold mt-4">Vicente Navas</h2>
-    <p class="text-gray-400">Vicente navas</p>
+    <h2 class="text-xl font-semibold mt-4">{{user?.username}}</h2>
+    <p class="text-gray-400">{{user?.email}}</p>
     <div class="flex gap-4 mt-4 text-center">
       <div>
         <p class="font-bold">0</p>
@@ -67,11 +67,11 @@
 <div *ngFor="let pub of publications" class="p-4 border-b border-gray-700">
   <div class="flex items-start">
     <div class="w-12 h-12 rounded-full bg-teal-600 flex items-center justify-center text-white font-bold text-xl">
-      {{ pub.name.charAt(0).toUpperCase() }}
+      {{ pub.username.charAt(0).toUpperCase() }}
     </div>
     <div class="ml-3 flex-1">
       <div class="text-sm text-white font-semibold">
-        {{ pub.name }} <span class="text-gray-500">{{ pub.username }} · {{ tiempoTranscurrido(pub.date) }}</span>
+        {{ pub.username }} <span class="text-gray-500">{{ pub.email }} · {{ tiempoTranscurrido(pub.date) }}</span>
       </div>
       <p class="mt-1">{{ pub.text }}</p>
       <img *ngIf="pub.image" [src]="pub.image" class="rounded-lg mt-3 max-h-64 object-cover border border-gray-700" />

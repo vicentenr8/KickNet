@@ -1,46 +1,67 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // Importa FormsModule para usar [(ngModel)]
-import { FixturesService } from '../fixtures/fixtures.service';
-import { FixturesComponent } from "../fixtures/fixtures.component";
-@Component({
-  selector: 'app-home', // Selector corregido
-  standalone: true,
-  imports: [CommonModule, FormsModule, FixturesComponent], // Importa CommonModule
-  templateUrl: './home.component.html', // Apunta a su propio HTML
-  //styleUrl: './landing.component.css' // Opcional: si tiene estilos
-})
+import { FormsModule } from '@angular/forms';
+import { FixturesComponent } from '../fixtures/fixtures.component';
+import { PublicationService } from './Publication.service';
+import { AuthService, User } from '../landing/auth.service';
 
+@Component({
+  selector: 'app-home',
+  standalone: true,
+  imports: [CommonModule, FormsModule, FixturesComponent],
+  templateUrl: './home.component.html',
+})
 export class HomeComponent {
   mensagges: string = '';
-  selectedImage: string | undefined = undefined;
+  selectedImage?: string;
   publications: Publication[] = [];
 
-  user = {
-    name: 'Visco',
-    username: 'Visco1999',
-    profileImage: '' // Si está vacío, se usa la inicial
-  };
+  user: User | null = null;
 
   avatarColors = [
     '#1abc9c', '#3498db', '#9b59b6',
     '#e67e22', '#e74c3c', '#2ecc71', '#f1c40f'
   ];
 
-  publish = () => {
-    if (this.mensagges.trim()) {
-      this.publications.unshift({
-        text: this.mensagges,
-        date: new Date(),
-        name: this.user.name,
-        username: this.user.username,
-        profileImage: this.user.profileImage,
-        image: this.selectedImage ?? undefined
-      });
-      this.mensagges = '';
-      this.selectedImage = undefined;
+  constructor(
+    private publicationService: PublicationService,
+    private authService: AuthService
+  ) {
+    // Cargar usuario actual de AuthService (localStorage)
+    this.user = this.authService.getCurrentUser();
+  }
+
+  publish() {
+    if (!this.mensagges.trim()) return;
+    if (!this.user) {
+      alert('Debes iniciar sesión para publicar');
+      return;
     }
-  };
+
+    const payload = {
+      user_id: this.user.id,
+      content: this.mensagges,
+      image: this.selectedImage,
+    };
+
+    this.publicationService.createPublication(payload).subscribe({
+      next: (response: any) => {
+        console.log('Publicación creada:', response);
+        this.publications.unshift({
+          text: this.mensagges,
+          date: new Date(),
+          email: this.user!.email,
+          username: this.user!.username,
+          image: this.selectedImage,
+        });
+        this.mensagges = '';
+        this.selectedImage = undefined;
+      },
+      error: (err) => {
+        console.error('Error al publicar', err);
+      }
+    });
+  }
 
   tiempoTranscurrido(date: Date): string {
     const now = new Date();
@@ -65,6 +86,7 @@ export class HomeComponent {
   }
 
   get userInitial(): string {
+    if (!this.user?.username) return '';
     return this.user.username.charAt(0).toUpperCase();
   }
 
@@ -81,8 +103,7 @@ export class HomeComponent {
 interface Publication {
   text: string;
   date: Date;
-  name: string;
+  email: string;
   username: string;
-  profileImage: string;
   image?: string;
 }
