@@ -10,23 +10,12 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
-use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use App\Service\MailerService;
 
 #[Route('/api/auth')]
 class AuthController extends AbstractController
 {
-    private $mailer;
-    private $urlGenerator;
-
-    public function __construct(MailerInterface $mailer, UrlGeneratorInterface $urlGenerator)
-    {
-        $this->mailer = $mailer;
-        $this->urlGenerator = $urlGenerator;
-    }
-
     #[Route('/login-check', name: 'api_login_check', methods: ['GET'])]
     public function loginCheck(): JsonResponse
     {
@@ -34,7 +23,7 @@ class AuthController extends AbstractController
     }
 
     #[Route('/register', name: 'api_register', methods: ['POST'])]
-    public function register(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): JsonResponse
+    public function register(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher, MailerService $mailerService, UrlGeneratorInterface $urlGenerator): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 
@@ -68,21 +57,12 @@ class AuthController extends AbstractController
         $em->flush();
 
         // Enviar email con link de activación
-        $activationUrl = $this->urlGenerator->generate('api_verify_account', ['token' => $activationToken], UrlGeneratorInterface::ABSOLUTE_URL);
+        $activationUrl = $urlGenerator->generate('api_verify_account', ['token' => $activationToken], UrlGeneratorInterface::ABSOLUTE_URL);
 
-        $email = (new TemplatedEmail())
-            ->from(new Address('no-reply@tudominio.com', 'Tu App'))
-            ->to($user->getEmail())
-            ->subject('Activa tu cuenta')
-            ->htmlTemplate('emails/activation.html.twig')
-            ->context([
-                'username' => $user->getUsername(),
-                'activationUrl' => $activationUrl,
-            ]);
+        $mailerService->sendVerificationEmail($user->getEmail(), $activationUrl);
 
-        $this->mailer->send($email);
-
-        return new JsonResponse(['message' => 'User registered successfully. Check your email to activate your account.'], Response::HTTP_CREATED);
+        return new JsonResponse(['message' => 'User registered successfully. Check your email to activate your account.',
+                                'activationUrl' => $activationUrl], Response::HTTP_CREATED);
     }
 
     #[Route('/verify-account/{token}', name: 'api_verify_account', methods: ['GET'])]

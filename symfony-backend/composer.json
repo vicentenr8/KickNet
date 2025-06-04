@@ -5,7 +5,8 @@
         "nelmio/cors-bundle": "^2.5",
         "symfony/mailer": "^7.3",
         "symfony/twig-bundle": "^7.2",
-        "symfony/runtime": "^7.3"
+        "symfony/runtime": "^7.3",
+        "symfony/twig-bridge": "^7.3"
     },
     "config": {
         "allow-plugins": {

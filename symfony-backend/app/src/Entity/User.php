@@ -28,8 +28,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $password = null;
 
-    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
-    private ?bool $verified = null;
 
     /**
      * @var Collection<int, Comment>
@@ -48,6 +46,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\OneToMany(targetEntity: Forecast::class, mappedBy: 'users')]
     private Collection $forecasts;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $registerDate = null;
+
+    #[ORM\Column]
+    private ?bool $verified = null;
+
+    #[ORM\Column(type: 'string', length: 64, nullable: true)]
+    private ?string $activationToken = null;
+
 
     public function __construct()
     {
@@ -93,18 +101,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): static
     {
         $this->password = $password;
-
-        return $this;
-    }
-
-    public function getRegisterDate(): ?\DateTimeInterface
-    {
-        return $this->registerDate;
-    }
-
-    public function setRegisterDate(\DateTimeInterface $registerDate): static
-    {
-        $this->registerDate = $registerDate;
 
         return $this;
     }
@@ -218,5 +214,41 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // This method is used to get the unique identifier of the user
         return (string) $this->email; // or $this->username, depending on your preference
-}
+    }
+
+    public function getRegisterDate(): ?\DateTimeInterface
+    {
+        return $this->registerDate;
+    }
+
+    public function setRegisterDate(\DateTimeInterface $registerDate): static
+    {
+        $this->registerDate = $registerDate;
+
+        return $this;
+    }
+
+    public function isVerified(): ?bool
+    {
+        return $this->verified;
+    }
+
+    public function setVerified(bool $verified): static
+    {
+        $this->verified = $verified;
+
+        return $this;
+    }
+
+
+    public function getActivationToken(): ?string
+    {
+        return $this->activationToken;
+    }
+
+    public function setActivationToken(?string $activationToken): self
+    {
+        $this->activationToken = $activationToken;
+        return $this;
+    }
 }
