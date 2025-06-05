@@ -63,7 +63,17 @@
     </div>
 
     <!-- Publicaciones -->
-    <div *ngFor="let pub of publications" class="p-4 border-b border-gray-700">
+    <div *ngFor="let pub of publications" class="p-4 border-b border-gray-700 relative">
+      <!-- Botón eliminar absolutamente posicionado -->
+      <button
+        *ngIf="pub.user_id === userId"
+        aria-label="Eliminar publicación"
+        (click)="eliminarPublicacion(pub.id!)"
+        class="absolute top-3 right-5 text-gray-400 hover:text-red-500"
+      >
+        <i class="fas fa-trash-alt cursor-pointer"></i>
+      </button>
+
       <div class="flex items-start">
         <div class="w-12 h-12 rounded-full bg-teal-600 flex items-center justify-center text-white font-bold text-xl">
           {{ pub.username.charAt(0).toUpperCase() }}
@@ -79,7 +89,6 @@
             <i class="fa-regular fa-heart hover:text-red-500 cursor-pointer"></i>
             <button (click)="oppenCommentModal(pub)" class="hover:text-blue-500 cursor-pointer" cursor-pointer>
               <i class="fa-regular fa-comment "></i><span class=" font-semibold px-2">{{ commentsCountMap[pub.id!] || 0 }}</span>
-
             </button>
           </div>
         </div>

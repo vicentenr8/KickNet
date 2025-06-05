@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Controller;
-
+use Symfony\Component\Security\Core\User\UserInterface;
 use App\Entity\Publication;
 use App\Repository\PublicationRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -118,14 +118,27 @@ class PublicationController extends AbstractController
         return $this->json(['message' => 'Publication updated']);
     }
 
-    #[Route('/{id}', name: 'publication_delete', methods: ['DELETE'])]
-    public function delete(Publication $publication, EntityManagerInterface $em): JsonResponse
+   // Symfony Controller
+    #[Route('/{id}', name: 'delete_publicacion', methods: ['DELETE'])]
+    public function delete(int $id, UserInterface $user, EntityManagerInterface $em, PublicationRepository $publicationRepo): JsonResponse
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        $em->remove($publication);
-        $em->flush();
+    $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+    $publicacion = $publicationRepo->find($id);
 
-        return $this->json(['message' => 'Publication deleted']);
+    if (!$publicacion) {
+        return new JsonResponse(['error' => 'Publicación no encontrada'], 404);
     }
+
+    if ($publicacion->getUsers()->getId() !== $user->getId()) {
+        return new JsonResponse(['error' => 'No autorizado'], 403);
+    }
+
+    $em->remove($publicacion);
+    $em->flush();
+
+    return new JsonResponse(['success' => true]);
+}
+
+
 }

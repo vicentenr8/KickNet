@@ -35,7 +35,7 @@ public function sendVerificationEmail(string $to, string $url): void
     HTML;
 
     $email = (new Email())
-        ->from('Kicknet <kicknet@gmail.com>')
+        ->from('Kicknet <vicentenr8@gmail.com>')
         ->to($to)
         ->subject('Verifica tu cuenta - Kicknet')
         ->html($html);

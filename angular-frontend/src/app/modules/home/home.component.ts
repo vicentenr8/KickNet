@@ -189,6 +189,21 @@ export class HomeComponent implements OnInit {
       },
     });
   }
+
+  eliminarPublicacion(publicationId: number) {
+    const confirmado = confirm('¿Seguro que quieres eliminar esta publicación?');
+    if (!confirmado) return;
+  
+    this.publicationService.deletePublication(publicationId).subscribe({
+      next: () => {
+        this.publications = this.publications.filter(p => p.id !== publicationId);
+      },
+      error: (err) => {
+        console.error('Error eliminando publicación', err);
+      }
+    });
+  }
+  
   
 }
 

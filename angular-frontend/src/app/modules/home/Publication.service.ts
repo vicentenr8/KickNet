@@ -17,4 +17,9 @@ export class PublicationService {
   getPublications() {
     return this.http.get(this.apiUrl);
   }
+
+  deletePublication(id: number) {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+  
 }

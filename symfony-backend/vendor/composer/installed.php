@@ -3,7 +3,7 @@
         'name' => '__root__',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '7679084fb5c715056fc9f4c29d1380dcd3943709',
+        'reference' => '9bff9f00c60621e3de2ab48e315e3f9d539d9a9f',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         '__root__' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '7679084fb5c715056fc9f4c29d1380dcd3943709',
+            'reference' => '9bff9f00c60621e3de2ab48e315e3f9d539d9a9f',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -243,6 +243,15 @@
             'provided' => array(
                 0 => '1.0|2.0|3.0',
             ),
+        ),
+        'symfony/brevo-mailer' => array(
+            'pretty_version' => 'v7.3.0',
+            'version' => '7.3.0.0',
+            'reference' => 'f8eaa8d16fda38ce31548130aee8e90d5d94d32d',
+            'type' => 'symfony-mailer-bridge',
+            'install_path' => __DIR__ . '/../symfony/brevo-mailer',
+            'aliases' => array(),
+            'dev_requirement' => false,
         ),
         'symfony/cache' => array(
             'pretty_version' => 'v7.2.6',
