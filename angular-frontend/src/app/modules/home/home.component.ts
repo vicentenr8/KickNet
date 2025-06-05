@@ -4,8 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { FixturesComponent } from '../fixtures/fixtures.component';
 import { PublicationService } from './Publication.service';
 import { AuthService, User } from '../landing/auth.service';
-import { HttpHeaders } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
+import { CommentService } from './Comment.service'; // Servicio de comentarios
 
 @Component({
   selector: 'app-home',
@@ -13,30 +13,33 @@ import { HttpClient } from '@angular/common/http';
   imports: [CommonModule, FormsModule, FixturesComponent],
   templateUrl: './home.component.html',
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   mensagges: string = '';
   selectedImage?: string;
   publications: Publication[] = [];
 
   user: User | null = null;
+  userId: number = 0;
+  avatarGenerator = new AvatarGenerator();
 
- /* avatarColors = [
-    '#1abc9c',
-    '#3498db',
-    '#9b59b6',
-    '#e67e22',
-    '#e74c3c',
-    '#2ecc71',
-    '#f1c40f',
-  ];*/
+  showCommentModal = false;
+  selectedPublication: Publication | null = null;
+  newCommentContent: string = '';
 
   constructor(
     private publicationService: PublicationService,
     private authService: AuthService,
-    private http: HttpClient
+    private http: HttpClient,
+    private commentService: CommentService 
   ) {
-    // Cargar usuario actual de AuthService (localStorage)
     this.user = this.authService.getCurrentUser();
+  }
+
+  ngOnInit() {
+    this.loadPublications();
+    if (this.user) {
+      this.userId = this.user.id;
+    }
   }
 
   publish() {
@@ -49,17 +52,16 @@ export class HomeComponent {
     if (!this.mensagges.trim()) return;
     if (!this.user) {
       console.error('Usuario no autenticado');
-      alert('Debes iniciar sesión para publicar.'); // Mejor un alert si es un error crítico
+      alert('Debes iniciar sesión para publicar.');
       return;
     }
+
     const payload = {
       user_id: this.user.id,
       content: this.mensagges,
-      image: this.selectedImage ? this.selectedImage : null, // Asegúrate de que la imagen sea opcional
+      image: this.selectedImage ? this.selectedImage : null,
     };
-    if (this.selectedImage) {
-      payload['image'] = this.selectedImage; // Añadir la imagen al payload si está seleccionada
-    }
+
     this.publicationService.createPublication(payload).subscribe({
       next: (response: any) => {
         console.log('Publicación creada:', response);
@@ -69,6 +71,7 @@ export class HomeComponent {
           email: this.user!.email,
           username: this.user!.username,
           image: this.selectedImage,
+          user_id: this.user!.id,
         });
         this.mensagges = '';
         this.selectedImage = undefined;
@@ -76,9 +79,7 @@ export class HomeComponent {
       error: (err) => {
         console.error('Error al publicar', err);
         if (err.status === 401) {
-          alert(
-            'Tu sesión ha expirado o no estás autorizado. Por favor, inicia sesión de nuevo.'
-          );
+          alert('Tu sesión ha expirado o no estás autorizado. Por favor, inicia sesión de nuevo.');
         } else {
           alert('Hubo un error al publicar. Inténtalo de nuevo.');
         }
@@ -86,40 +87,28 @@ export class HomeComponent {
     });
   }
 
-  ngOnInit() {
-    this.loadPublications(); // Llama a la función para cargar las publicaciones
-  }
-
-  // Método para cargar las publicaciones desde el servicio
   loadPublications() {
     this.publicationService.getPublications().subscribe({
       next: (response: any) => {
-        console.log('Publicaciones recibidas del backend:', response); // Para depuración
-
-        // Mapea la respuesta a tu interfaz Publication
         this.publications = response.map((pub: any) => ({
           text: pub.content,
           date: new Date(pub.date),
           email: pub.email || 'email@desconocido.com',
-          username: pub.username || 'Usuario Desconocido', 
+          username: pub.username || 'Usuario Desconocido',
           image: pub.image || '',
           user_id: pub.user_id,
+          id: pub.id,
         }));
-
-        console.log('Publicaciones mapeadas para el frontend:', this.publications); // Para depuración
       },
       error: (err) => {
         console.error('Error al cargar publicaciones:', err);
-        // ... (resto del manejo de errores)
       },
     });
   }
 
   tiempoTranscurrido(date: Date): string {
     const now = new Date();
-    const seconds = Math.floor(
-      (now.getTime() - new Date(date).getTime()) / 1000
-    );
+    const seconds = Math.floor((now.getTime() - new Date(date).getTime()) / 1000);
     if (seconds < 60) return 'Justo ahora';
     else if (seconds < 3600) return `${Math.floor(seconds / 60)} min`;
     else if (seconds < 86400) return `${Math.floor(seconds / 3600)} h`;
@@ -144,15 +133,41 @@ export class HomeComponent {
     return this.user.username.charAt(0).toUpperCase();
   }
 
- /* getAvatarColor(username: string): string {
-    let hash = 0;
-    for (let i = 0; i < username.length; i++) {
-      hash = username.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    const index = Math.abs(hash) % this.avatarColors.length;
-    return this.avatarColors[index];
+  getAvatarColor(username: string): string {
+    return this.avatarGenerator.getAvatarColor(username);
+  }
+
+  oppenCommentModal(pub: Publication): void {
+    this.showCommentModal = true;
+    this.selectedPublication = pub;
+  }
+
+  closeCommentModal(): void {
+    this.showCommentModal = false;
+    this.selectedPublication = null;
+    this.newCommentContent = '';
+  }
+
+  publicarComentario(): void {
+    if (!this.newCommentContent.trim() || !this.selectedPublication) return;
+
+    this.commentService.createComment({
+      content: this.newCommentContent,
+      user_id: this.userId,
+      publication_id: this.selectedPublication.id!
+    }).subscribe({
+      next: (res) => {
+        console.log('Comentario publicado:', res);
+        this.newCommentContent = '';
+        this.closeCommentModal();
+      },
+      error: (err) => {
+        console.error('Error al publicar comentario:', err);
+      }
+    });
     
-  }*/
+    
+  }
 }
 
 class AvatarGenerator {
@@ -171,21 +186,18 @@ class AvatarGenerator {
     for (let i = 0; i < username.length; i++) {
       hash = username.charCodeAt(i) + ((hash << 5) - hash);
     }
-
     const absHash = Math.abs(hash);
     const index = absHash % this.avatarColors.length;
-
-    console.log(`Hash: ${hash}, Abs Hash: ${absHash}, Index: ${index}`);
-
-
     return this.avatarColors[index];
   }
 }
 
 interface Publication {
+  id?: number;
   text: string;
   date: Date;
   email: string;
   username: string;
   image?: string;
+  user_id?: number;
 }

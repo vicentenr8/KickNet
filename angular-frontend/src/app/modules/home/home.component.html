@@ -18,71 +18,118 @@
         <p class="text-sm text-gray-400">Seguidores</p>
       </div>
     </div>
-
   </aside>
 
- <!-- Sección Central: Feed -->
- <main class="w-full lg:w-6/12 border-x border-gray-800">
-  <!-- Publicar Contenido -->
-<div class="border-y border-gray-800 flex flex-col py-4 min-h-[120px]">
-  <div class="flex items-start px-4">
-    <div class="w-12 h-12 rounded-full bg-teal-600 flex items-center justify-center text-white font-bold text-xl mt-3">
-      {{ userInitial }}
-    </div>
-    <textarea
-      [(ngModel)]="mensagges"
-      placeholder="¿Qué está pasando?"
-      maxlength="200"
-      class="flex-1 resize-none bg-transparent border-none focus:outline-none text-xl placeholder-gray-400 ml-4 mt-4"
-    ></textarea>
-  </div>
-
-  <!-- Barra de herramientas -->
-  <div class="flex justify-between items-center px-4 mt-2">
-    <div>
-      <label for="imgUpload" class="cursor-pointer text-gray-500 hover:text-gray-300">
-        <i class="fa-regular fa-image text-xl"></i>
-        <input id="imgUpload" type="file" accept="image/*" (change)="onImageSelected($event)" class="hidden">
-      </label>
-    </div>
-    <div class="text-sm text-gray-400">
-      {{ characterCount }} / 200
-    </div>
-  </div>
-
-  <!-- Imagen previa -->
-  <div *ngIf="selectedImage" class="p-4">
-    <img [src]="selectedImage" class="rounded-lg max-h-64 object-cover border border-gray-700" />
-  </div>
-
-  <button
-    (click)="publish()"
-    class="bg-white text-black rounded-full px-4 py-2 mt-2 mr-4 self-end font-bold hover:bg-gray-300"
-  >
-    Publicar
-  </button>
-</div>
-
-<!-- Publicaciones -->
-<div *ngFor="let pub of publications" class="p-4 border-b border-gray-700">
-  <div class="flex items-start">
-    <div class="w-12 h-12 rounded-full bg-teal-600 flex items-center justify-center text-white font-bold text-xl">
-      {{ pub.username.charAt(0).toUpperCase() }}
-    </div>
-    <div class="ml-3 flex-1">
-      <div class="text-sm text-white font-semibold">
-        {{ pub.username }} <span class="text-gray-500">{{ pub.email }} · {{ tiempoTranscurrido(pub.date) }}</span>
+  <!-- Sección Central: Feed -->
+  <main class="w-full lg:w-6/12 border-x border-gray-800">
+    <!-- Publicar Contenido -->
+    <div class="border-y border-gray-800 flex flex-col py-4 min-h-[120px]">
+      <div class="flex items-start px-4">
+        <div class="w-12 h-12 rounded-full bg-teal-600 flex items-center justify-center text-white font-bold text-xl mt-3">
+          {{ userInitial }}
+        </div>
+        <textarea
+          [(ngModel)]="mensagges"
+          placeholder="¿Qué está pasando?"
+          maxlength="200"
+          class="flex-1 resize-none bg-transparent border-none focus:outline-none text-xl placeholder-gray-400 ml-4 mt-4"
+        ></textarea>
       </div>
-      <p class="mt-1">{{ pub.text }}</p>
-      <img *ngIf="pub.image" [src]="pub.image" class="rounded-lg mt-3 max-h-64 object-cover border border-gray-700" />
-      <div class="flex items-center gap-5 mt-2 text-gray-400">
-        <i class="fa-regular fa-heart hover:text-red-500 cursor-pointer"></i>
-        <i class="fa-regular fa-comment hover:text-blue-500 cursor-pointer"></i>
+
+      <!-- Barra de herramientas -->
+      <div class="flex justify-between items-center px-4 mt-2">
+        <div>
+          <label for="imgUpload" class="cursor-pointer text-gray-500 hover:text-gray-300">
+            <i class="fa-regular fa-image text-xl"></i>
+            <input id="imgUpload" type="file" accept="image/*" (change)="onImageSelected($event)" class="hidden">
+          </label>
+        </div>
+        <div class="text-sm text-gray-400">
+          {{ characterCount }} / 200
+        </div>
+      </div>
+
+      <!-- Imagen previa -->
+      <div *ngIf="selectedImage" class="p-4">
+        <img [src]="selectedImage" class="rounded-lg max-h-64 object-cover border border-gray-700" />
+      </div>
+
+      <button
+        (click)="publish()"
+        class="bg-white text-black rounded-full px-4 py-2 mt-2 mr-4 self-end font-bold hover:bg-gray-300"
+      >
+        Publicar
+      </button>
+    </div>
+
+    <!-- Publicaciones -->
+    <div *ngFor="let pub of publications" class="p-4 border-b border-gray-700">
+      <div class="flex items-start">
+        <div class="w-12 h-12 rounded-full bg-teal-600 flex items-center justify-center text-white font-bold text-xl">
+          {{ pub.username.charAt(0).toUpperCase() }}
+        </div>
+        
+        <div class="ml-3 flex-1">
+          <div class="text-sm text-white font-semibold">
+            {{ pub.username }} <span class="text-gray-500">{{ pub.email }} · {{ tiempoTranscurrido(pub.date) }}</span>
+          </div>
+          <p class="mt-1">{{ pub.text }}</p>
+          <img *ngIf="pub.image" [src]="pub.image" class="rounded-lg mt-3 max-h-64 object-cover border border-gray-700" />
+          <div class="flex items-center gap-5 mt-2 text-gray-400">
+            <i class="fa-regular fa-heart hover:text-red-500 cursor-pointer"></i>
+            <button (click)="oppenCommentModal(pub)">
+              <i class="fa-regular fa-comment hover:text-blue-500 cursor-pointer"></i>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
-</main>
+
+    <!-- Modal Fuera del *ngFor -->
+    <div *ngIf="showCommentModal && selectedPublication" class="fixed inset-0 z-50 flex items-center justify-center">
+      <div class="bg-black text-white rounded-2xl shadow-lg p-6 w-11/12 max-w-lg mx-auto">
+        <div class="relative mb-6">
+          <button 
+            (click)="closeCommentModal()" 
+            class="absolute top-0 right-0 text-gray-400 hover:text-white text-2xl font-bold rounded-full p-1 transition-colors duration-200"
+            aria-label="Cerrar modal"
+          >
+            ×
+          </button>
+          <div class="flex items-start">
+            <div class="w-12 h-12 rounded-full bg-teal-600 flex items-center justify-center text-white font-bold text-xl">
+              {{ selectedPublication.username.charAt(0).toUpperCase() }}
+            </div>
+            <div class="ml-3 flex-1">
+              <div class="text-sm text-white font-semibold">
+                {{ selectedPublication.username }} 
+                <span class="text-gray-500">{{ selectedPublication.email }} · {{ tiempoTranscurrido(selectedPublication.date) }}</span>
+              </div>
+              <p class="mt-1">{{ selectedPublication.text }}</p>
+            </div>
+          </div>
+        </div>
+
+        <textarea
+          rows="4"
+          placeholder="Postea tu comentario"
+          [(ngModel)]="newCommentContent"
+          class="w-full p-4 rounded-xl resize-none border border-gray-700 bg-gray-900 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-6"
+        ></textarea>
+
+        <div class="flex justify-end">
+          <button
+            (click)="publicarComentario()"
+            class="px-5 py-2 rounded-full bg-blue-500 text-white font-semibold hover:bg-blue-600 transition"
+          >
+            Publicar
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
   <!--Sección Derecha-->
   <div class="hidden lg:flex lg:w-3/12 flex-col p-6 space-y-6">
     <app-fixtures></app-fixtures>
@@ -90,7 +137,6 @@
 </div>
 
 <!-- Footer para dispositivos móviles -->
-
 <div
   class="lg:hidden fixed bottom-0 left-0 w-full bg-black border-t border-t-gray-800 flex justify-around py-2 pt-5 z-50"
 >
