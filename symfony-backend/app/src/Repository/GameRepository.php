@@ -16,6 +16,17 @@ class GameRepository extends ServiceEntityRepository
         parent::__construct($registry, Game::class);
     }
 
+
+public function findOneByExternalGameId(int $externalGameId): ?Game
+{
+    return $this->createQueryBuilder('g')
+        ->andWhere('g.externalGameId = :externalGameId')
+        ->setParameter('externalGameId', $externalGameId)
+        ->getQuery()
+        ->getOneOrNullResult();
+}
+
+
     //    /**
     //     * @return Game[] Returns an array of Game objects
     //     */

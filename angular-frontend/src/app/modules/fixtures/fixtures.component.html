@@ -21,9 +21,9 @@
           <span class="font-semibold text-white">{{ match.teams.home.name }} vs {{ match.teams.away.name }}</span>
           <span class="text-sm text-white">{{ match.fixture.date | date:'shortTime' }}</span>
           <div class="flex flex-row gap-3 w-full">
-            <button class="flex-1 rounded-full bg-white text-black cursor-pointer hover:bg-white/60 transition-colors mt-4 font-semibold">1</button>
-            <button class="flex-1 rounded-full border border-white bg-black text-white cursor-pointer hover:bg-white/60 transition-colors mt-4 font-semibold">X</button>
-            <button class="flex-1 rounded-full bg-white text-black cursor-pointer hover:bg-white/60 transition-colors mt-4 font-semibold">2</button>
+            <button (click)="sendForecast(match.fixture.id, '1')"  class="flex-1 rounded-full bg-white text-black cursor-pointer hover:bg-white/60 transition-colors mt-4 font-semibold">1</button>
+            <button (click)="sendForecast(match.fixture.id, 'X')" class="flex-1 rounded-full border border-white bg-black text-white cursor-pointer hover:bg-white/60 transition-colors mt-4 font-semibold">X</button>
+            <button (click)="sendForecast(match.fixture.id, '2')"  class="flex-1 rounded-full bg-white text-black cursor-pointer hover:bg-white/60 transition-colors mt-4 font-semibold">2</button>
             </div>
         </div>
       </li>

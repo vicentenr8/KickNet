@@ -28,6 +28,9 @@ class Game
     #[ORM\JoinColumn(nullable: false)]
     private ?Team $awayTeam = null;
 
+    #[ORM\Column(type: 'integer', unique: true)]
+    private int $externalGameId;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -79,5 +82,16 @@ class Game
         $this->awayTeam = $awayTeam;
 
         return $this;
+    }
+
+    public function getExternalGameId(): int
+    {
+    return $this->externalGameId;
+    }
+
+    public function setExternalGameId(int $externalGameId): self
+    {   
+    $this->externalGameId = $externalGameId;
+    return $this;
     }
 }

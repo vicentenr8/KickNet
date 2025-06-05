@@ -30,34 +30,35 @@ class ForecastController extends AbstractController
     public function create(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-
-        // Validar campos mínimos
-        if (!isset($data['result'], $data['user_id'], $data['game_id'])) {
+    
+        if (!isset($data['result'], $data['game_id'])) {
             return $this->json(['error' => 'Campos requeridos faltantes'], 400);
         }
-
-        $game = $this->gameRepository->find($data['game_id']);
-        if (!$game) {
-            return $this->json(['error' => 'Partido no encontrado'], 404);
-        }
-
-        $user = $this->getDoctrine()->getRepository('App:User')->find($data['user_id']);
+    
+        $user = $this->getUser();
         if (!$user) {
-            return $this->json(['error' => 'Usuario no encontrado'], 404);
+            return $this->json(['error' => 'Usuario no autenticado'], 401);
         }
 
+        $game = $this->gameRepository->findOneBy(['externalGameId' => $data['game_id']]);
+            if (!$game) {
+             return $this->json(['error' => 'Partido no encontrado'], 404);
+        }
+        $forecast->setGame($game);
+
+    
         $forecast = new Forecast();
         $forecast->setResult($data['result']);
+        $forecast->setExternalGameId($data['game_id']); // guardas ID externo
         $forecast->setUsers($user);
-        $forecast->setGame($game);
         $forecast->setForecastDate(new \DateTime());
-
+    
         $this->em->persist($forecast);
         $this->em->flush();
-
+    
         return $this->json(['status' => 'Pronóstico guardado correctamente'], 201);
     }
-
+    
     #[Route('', name: 'list', methods: ['GET'])]
     public function list(): JsonResponse
     {

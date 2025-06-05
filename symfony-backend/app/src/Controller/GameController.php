@@ -11,52 +11,42 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/api/games')]
 class GameController extends AbstractController
 {
-    #[Route('/by-league', name: 'game_by_league', methods: ['GET'])]
-    public function getGamesByLeagueAndSeason(Request $request, GameRepository $gameRepository): JsonResponse
-    {
-        $league = $request->query->get('league');   // ej: "Premier League"
-        $season = $request->query->get('season');   // ej: "2023"
+    #[Route('/get-or-create/{externalGameId}', name: 'game_get_or_create', methods: ['GET'])]
+public function getOrCreateGame(
+    int $externalGameId, 
+    GameRepository $gameRepository,
+    EntityManagerInterface $em
+): JsonResponse
+{
+    // Buscar juego existente
+    $game = $gameRepository->findOneByExternalGameId($externalGameId);
 
-        if (!$league || !$season) {
-            return $this->json(['error' => 'Missing league or season parameter'], 400);
-        }
+    if (!$game) {
+        $externalGameData = [
+            'gameDate' => new \DateTime(), // fecha actual por ejemplo
+            'competition' => 'Premier League',
+            'localTeamName' => 'Team A',
+            'awayTeamName' => 'Team B',
+        ];
 
-        // Aquí asumimos que tienes un campo 'competition' para liga
-        // y que 'gameDate' contiene la fecha para filtrar por temporada
+        // Crear nuevo objeto Game y setear campos con datos externos
+        $game = new \App\Entity\Game();
+        $game->setExternalGameId($externalGameId);
+        $game->setGameDate($externalGameData['gameDate']);
+        $game->setCompetition($externalGameData['competition']);
 
-        $startDate = new \DateTime("{$season}-01-01 00:00:00");
-        $endDate = new \DateTime("{$season}-12-31 23:59:59");
-
-        $games = $gameRepository->createQueryBuilder('g')
-            ->andWhere('g.competition = :league')
-            ->andWhere('g.gameDate BETWEEN :start AND :end')
-            ->setParameters([
-                'league' => $league,
-                'start' => $startDate,
-                'end' => $endDate,
-            ])
-            ->orderBy('g.gameDate', 'ASC')
-            ->getQuery()
-            ->getResult();
-
-        $data = [];
-
-        foreach ($games as $game) {
-            $data[] = [
-                'id' => $game->getId(),
-                'gameDate' => $game->getGameDate()->format('Y-m-d H:i:s'),
-                'competition' => $game->getCompetition(),
-                'localTeam' => [
-                    'id' => $game->getLocalTeam()?->getId(),
-                    'name' => $game->getLocalTeam()?->getTeamName(),
-                ],
-                'awayTeam' => [
-                    'id' => $game->getAwayTeam()?->getId(),
-                    'name' => $game->getAwayTeam()?->getTeamName(),
-                ],
-            ];
-        }
-
-        return $this->json($data);
+        $em->persist($game);
+        $em->flush();
     }
+
+    // Devolver el partido, puede ser para usar luego en el pronóstico
+    return $this->json([
+        'id' => $game->getId(),
+        'externalGameId' => $game->getExternalGameId(),
+        'gameDate' => $game->getGameDate()->format('Y-m-d H:i:s'),
+        'competition' => $game->getCompetition(),
+        // Añade lo que necesites
+    ]);
+}
+
 }
