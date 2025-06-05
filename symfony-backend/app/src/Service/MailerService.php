@@ -22,7 +22,7 @@ class MailerService
                 
                 <!-- Logo -->
                 <div style="margin-bottom: 30px;">
-                    <img src="https://yourdomain.com/logo-kicknet.svg" alt="Kicknet Logo" style="max-width: 150px; height: auto; margin: 0 auto;" />
+                    <img src="logo.svg" alt="Kicknet Logo" style="max-width: 150px; height: auto; margin: 0 auto;" />
                 </div>
                 
                 <!-- Heading -->

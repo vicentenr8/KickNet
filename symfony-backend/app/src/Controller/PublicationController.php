@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controller;
+
 use Symfony\Component\Security\Core\User\UserInterface;
 use App\Entity\Publication;
 use App\Repository\PublicationRepository;
@@ -26,6 +27,7 @@ class PublicationController extends AbstractController
             $data[] = [
                 'id'       => $publication->getId(),
                 'content'  => $publication->getContent(),
+                'image'    => $publication->getImage(),
                 'date'     => $publication->getPublicationDate()->format('Y-m-d H:i:s'),
                 'user_id'  => $user ? $user->getId() : null,
                 'username' => $user ? $user->getUsername() : 'Usuario Desconocido',
@@ -70,6 +72,7 @@ class PublicationController extends AbstractController
         return $this->json([
             'id'       => $publication->getId(),
             'content'  => $publication->getContent(),
+            'image'    => $publication->getImage(),
             'date'     => $publication->getPublicationDate()->format('Y-m-d H:i:s'),
             'user_id'  => $user ? $user->getId() : null,
             'username' => $user ? $user->getUsername() : 'Usuario Desconocido',
@@ -83,18 +86,20 @@ class PublicationController extends AbstractController
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        // Obtenemos el usuario directamente del token validado
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 
         $data = json_decode($request->getContent(), true);
         $content = $data['content'] ?? '';
+        $image = $data['image'] ?? null;
+
         if (trim($content) === '') {
             return $this->json(['error' => 'Falta contenido'], 400);
         }
 
         $publication = new Publication();
         $publication->setContent($content);
+        $publication->setImage($image);
         $publication->setPublicationDate(new \DateTime());
         $publication->setUsers($user);
 
@@ -110,35 +115,36 @@ class PublicationController extends AbstractController
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         $data = json_decode($request->getContent(), true);
+
         if (isset($data['content'])) {
             $publication->setContent($data['content']);
         }
+        if (array_key_exists('image', $data)) {
+            $publication->setImage($data['image']);
+        }
+
         $em->flush();
 
         return $this->json(['message' => 'Publication updated']);
     }
 
-   // Symfony Controller
     #[Route('/{id}', name: 'delete_publicacion', methods: ['DELETE'])]
     public function delete(int $id, UserInterface $user, EntityManagerInterface $em, PublicationRepository $publicationRepo): JsonResponse
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $publicacion = $publicationRepo->find($id);
 
-    $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-    $publicacion = $publicationRepo->find($id);
+        if (!$publicacion) {
+            return new JsonResponse(['error' => 'Publicación no encontrada'], 404);
+        }
 
-    if (!$publicacion) {
-        return new JsonResponse(['error' => 'Publicación no encontrada'], 404);
+        if ($publicacion->getUsers()->getId() !== $user->getId()) {
+            return new JsonResponse(['error' => 'No autorizado'], 403);
+        }
+
+        $em->remove($publicacion);
+        $em->flush();
+
+        return new JsonResponse(['success' => true]);
     }
-
-    if ($publicacion->getUsers()->getId() !== $user->getId()) {
-        return new JsonResponse(['error' => 'No autorizado'], 403);
-    }
-
-    $em->remove($publicacion);
-    $em->flush();
-
-    return new JsonResponse(['success' => true]);
-}
-
-
 }

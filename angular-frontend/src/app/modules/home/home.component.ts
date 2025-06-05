@@ -27,6 +27,7 @@ export class HomeComponent implements OnInit {
   selectedPublication: Publication | null = null;
   newCommentContent: string = '';
 
+
   constructor(
     private publicationService: PublicationService,
     private authService: AuthService,
@@ -60,7 +61,7 @@ export class HomeComponent implements OnInit {
     const payload = {
       user_id: this.user.id,
       content: this.mensagges,
-      image: this.selectedImage ? this.selectedImage : null,
+      image: this.selectedImage ? this.selectedImage : null,  // Mantenemos por backend aunque no usemos en frontend
     };
 
     this.publicationService.createPublication(payload).subscribe({
@@ -124,6 +125,7 @@ export class HomeComponent implements OnInit {
     else return `${Math.floor(seconds / 86400)} d`;
   }
 
+  
   onImageSelected(event: any) {
     const file = event.target.files[0];
     if (!file) return;
