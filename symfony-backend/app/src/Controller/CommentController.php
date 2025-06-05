@@ -125,4 +125,19 @@ class CommentController extends AbstractController
 
         return $this->json(['message' => 'Comentario eliminado']);
     }
+
+    #[Route('/count/{publicationId}', name: 'comment_count', methods: ['GET'])]
+    public function countCommentsByPublication(int $publicationId, CommentRepository $commentRepository, PublicationRepository $publicationRepository): JsonResponse
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        $publication = $publicationRepository->find($publicationId);
+        if (!$publication) {
+            return $this->json(['error' => 'Publicación no encontrada'], 404);
+        }
+
+        $count = $commentRepository->count(['publication' => $publication]);
+
+        return $this->json(['publication_id' => $publicationId, 'comments_count' => $count]);
+    }
 }

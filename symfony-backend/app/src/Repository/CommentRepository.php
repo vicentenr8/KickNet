@@ -16,6 +16,16 @@ class CommentRepository extends ServiceEntityRepository
         parent::__construct($registry, Comment::class);
     }
 
+    public function countCommentsGroupedByPublication(): array
+{
+    $qb = $this->createQueryBuilder('c')
+        ->select('IDENTITY(c.publication) AS publicationId, COUNT(c.id) AS count')
+        ->groupBy('c.publication');
+
+    return $qb->getQuery()->getArrayResult();
+}
+
+
     //    /**
     //     * @return Comment[] Returns an array of Comment objects
     //     */

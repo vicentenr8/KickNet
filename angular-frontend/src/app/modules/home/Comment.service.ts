@@ -18,5 +18,11 @@ export class CommentService {
   createComment(data: { content: string; user_id: number; publication_id: number }) {
     return this.http.post(this.apiUrl, data);
   }
+
+  countComments(publicationId: number) {
+    return this.http.get<{ publication_id: number; comments_count: number }>(
+      `${this.apiUrl}/count/${publicationId}`
+    );
+  }
   
 }

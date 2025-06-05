@@ -5,7 +5,7 @@ import { FixturesComponent } from '../fixtures/fixtures.component';
 import { PublicationService } from './Publication.service';
 import { AuthService, User } from '../landing/auth.service';
 import { HttpClient } from '@angular/common/http';
-import { CommentService } from './Comment.service'; // Servicio de comentarios
+import { CommentService } from './Comment.service'; 
 
 @Component({
   selector: 'app-home',
@@ -21,6 +21,7 @@ export class HomeComponent implements OnInit {
   user: User | null = null;
   userId: number = 0;
   avatarGenerator = new AvatarGenerator();
+  commentsCountMap: { [publicationId: number]: number } = {};
 
   showCommentModal = false;
   selectedPublication: Publication | null = null;
@@ -86,7 +87,7 @@ export class HomeComponent implements OnInit {
       },
     });
   }
-
+  
   loadPublications() {
     this.publicationService.getPublications().subscribe({
       next: (response: any) => {
@@ -99,12 +100,20 @@ export class HomeComponent implements OnInit {
           user_id: pub.user_id,
           id: pub.id,
         }));
+  
+        // Aquí llamas a loadCommentsCount para cada publicación:
+        this.publications.forEach(pub => {
+          if (pub.id) {
+            this.loadCommentsCount(pub.id);
+          }
+        });
       },
       error: (err) => {
         console.error('Error al cargar publicaciones:', err);
       },
     });
   }
+  
 
   tiempoTranscurrido(date: Date): string {
     const now = new Date();
@@ -150,7 +159,7 @@ export class HomeComponent implements OnInit {
 
   publicarComentario(): void {
     if (!this.newCommentContent.trim() || !this.selectedPublication) return;
-
+  
     this.commentService.createComment({
       content: this.newCommentContent,
       user_id: this.userId,
@@ -159,15 +168,28 @@ export class HomeComponent implements OnInit {
       next: (res) => {
         console.log('Comentario publicado:', res);
         this.newCommentContent = '';
+        this.loadCommentsCount(this.selectedPublication!.id!);
         this.closeCommentModal();
       },
       error: (err) => {
         console.error('Error al publicar comentario:', err);
       }
     });
-    
-    
   }
+  
+
+  loadCommentsCount(publicationId: number) {
+    this.commentService.countComments(publicationId).subscribe({
+      next: (res) => {
+        this.commentsCountMap[publicationId] = res.comments_count;
+      },
+      error: (err) => {
+        console.error('Error al obtener contador de comentarios', err);
+        this.commentsCountMap[publicationId] = 0; // fallback
+      },
+    });
+  }
+  
 }
 
 class AvatarGenerator {

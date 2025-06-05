@@ -77,8 +77,9 @@
           <img *ngIf="pub.image" [src]="pub.image" class="rounded-lg mt-3 max-h-64 object-cover border border-gray-700" />
           <div class="flex items-center gap-5 mt-2 text-gray-400">
             <i class="fa-regular fa-heart hover:text-red-500 cursor-pointer"></i>
-            <button (click)="oppenCommentModal(pub)">
-              <i class="fa-regular fa-comment hover:text-blue-500 cursor-pointer"></i>
+            <button (click)="oppenCommentModal(pub)" class="hover:text-blue-500 cursor-pointer" cursor-pointer>
+              <i class="fa-regular fa-comment "></i><span class=" font-semibold px-2">{{ commentsCountMap[pub.id!] || 0 }}</span>
+
             </button>
           </div>
         </div>
