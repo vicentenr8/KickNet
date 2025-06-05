@@ -67,7 +67,6 @@ export class LandingComponent {
       username: this.registerUsername,
       email: this.registerEmail,
       password: this.registerPassword,
-      verified: false,  // Asumiendo que el usuario no está verificado al registrarse
     };
   
     this.authService.register(userData).subscribe({

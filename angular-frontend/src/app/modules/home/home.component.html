@@ -2,12 +2,16 @@
   class="min-h-screen flex flex-col lg:flex-row bg-black text-white md:flex-row"
 >
   <!--Sección Izquierda-->
-  <aside class="hidden lg:flex lg:w-3/12 flex-col items-center p-6 border-r border-gray-800">
-    <div class="w-12 h-12 rounded-full bg-teal-600 flex items-center justify-center text-white font-bold text-xl mt-3">
+  <aside class="hidden lg:flex lg:w-3/12 flex flex-col items-center p-6 border-r border-gray-800">
+    <!-- Avatar y datos del usuario -->
+    <div
+      class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xl mt-3"
+      [ngStyle]="{ 'background-color': getAvatarColor(user?.username || '') }"
+    >
       {{ userInitial }}
     </div>
-    <h2 class="text-xl font-semibold mt-4">{{user?.username}}</h2>
-    <p class="text-gray-400">{{user?.email}}</p>
+    <h2 class="text-xl font-semibold mt-4">{{ user?.username }}</h2>
+    <p class="text-gray-400">{{ user?.email }}</p>
     <div class="flex gap-4 mt-4 text-center">
       <div>
         <p class="font-bold">0</p>
@@ -18,14 +22,34 @@
         <p class="text-sm text-gray-400">Seguidores</p>
       </div>
     </div>
+  
+    <!-- Botón Logout abajo -->
+    <div class="mt-auto w-full">
+      <button
+        (click)="logout()"
+        class="w-full py-3 rounded-full bg-white text-black cursor-pointer hover:bg-white/60 transition-colors mt-4 font-semibold"
+      >
+        <i class="fas fa-sign-out-alt text-lg"></i>
+        Logout
+      </button>
+    </div>
   </aside>
+  
 
   <!-- Sección Central: Feed -->
   <main class="w-full lg:w-6/12 border-x border-gray-800">
+    <!-- Título "Para ti" arriba -->
+    <h1 class="text-white text-2xl font-semibold border-b-4 border-blue-500 pb-2 px-4 mt-4">
+      Para ti
+    </h1>
+
     <!-- Publicar Contenido -->
     <div class="border-y border-gray-800 flex flex-col py-4 min-h-[120px]">
       <div class="flex items-start px-4">
-        <div class="w-12 h-12 rounded-full bg-teal-600 flex items-center justify-center text-white font-bold text-xl mt-3">
+        <div
+          class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xl mt-3"
+          [ngStyle]="{ 'background-color': getAvatarColor(user?.username || '') }"
+        >
           {{ userInitial }}
         </div>
         <textarea
@@ -41,7 +65,7 @@
         <div>
           <label for="imgUpload" class="cursor-pointer text-gray-500 hover:text-gray-300">
             <i class="fa-regular fa-image text-xl"></i>
-            <input id="imgUpload" type="file" accept="image/*" (change)="onImageSelected($event)" class="hidden">
+            <input id="imgUpload" type="file" accept="image/*" (change)="onImageSelected($event)" class="hidden" />
           </label>
         </div>
         <div class="text-sm text-gray-400">
@@ -51,7 +75,7 @@
 
       <!-- Imagen previa -->
       <div *ngIf="selectedImage" class="p-4">
-        <img [src]="selectedImage" class="rounded-lg max-h-64 object-cover border border-gray-700" />
+        <img [src]="selectedImage"  class="rounded-lg max-h-64 object-cover border border-gray-700" />
       </div>
 
       <button
@@ -75,20 +99,31 @@
       </button>
 
       <div class="flex items-start">
-        <div class="w-12 h-12 rounded-full bg-teal-600 flex items-center justify-center text-white font-bold text-xl">
+        <div
+          class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xl"
+          [ngStyle]="{ 'background-color': getAvatarColor(pub.username) }"
+        >
           {{ pub.username.charAt(0).toUpperCase() }}
         </div>
-        
+
         <div class="ml-3 flex-1">
           <div class="text-sm text-white font-semibold">
-            {{ pub.username }} <span class="text-gray-500">{{ pub.email }} · {{ tiempoTranscurrido(pub.date) }}</span>
+            {{ pub.username }}
+            <span class="text-gray-500">
+              {{ pub.email }} · {{ tiempoTranscurrido(pub.date) }}
+            </span>
           </div>
           <p class="mt-1">{{ pub.text }}</p>
-          <img *ngIf="pub.image" [src]="pub.image" class="rounded-lg mt-3 max-h-64 object-cover border border-gray-700" />
+          <img
+            *ngIf="pub.image"
+            [src]="pub.image"
+            class="rounded-lg mt-3 max-h-[400px] object-contain border border-gray-700"
+          />
           <div class="flex items-center gap-5 mt-2 text-gray-400">
             <i class="fa-regular fa-heart hover:text-red-500 cursor-pointer"></i>
-            <button (click)="oppenCommentModal(pub)" class="hover:text-blue-500 cursor-pointer" cursor-pointer>
-              <i class="fa-regular fa-comment "></i><span class=" font-semibold px-2">{{ commentsCountMap[pub.id!] || 0 }}</span>
+            <button (click)="oppenCommentModal(pub)" class="hover:text-blue-500 cursor-pointer">
+              <i class="fa-regular fa-comment"></i
+              ><span class="font-semibold px-2">{{ commentsCountMap[pub.id!] || 0 }}</span>
             </button>
           </div>
         </div>
@@ -99,21 +134,26 @@
     <div *ngIf="showCommentModal && selectedPublication" class="fixed inset-0 z-50 flex items-center justify-center">
       <div class="bg-black text-white rounded-2xl shadow-lg p-6 w-11/12 max-w-lg mx-auto">
         <div class="relative mb-6">
-          <button 
-            (click)="closeCommentModal()" 
+          <button
+            (click)="closeCommentModal()"
             class="absolute top-0 right-0 text-gray-400 hover:text-white text-2xl font-bold rounded-full p-1 transition-colors duration-200"
             aria-label="Cerrar modal"
           >
             ×
           </button>
           <div class="flex items-start">
-            <div class="w-12 h-12 rounded-full bg-teal-600 flex items-center justify-center text-white font-bold text-xl">
+            <div
+              class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xl"
+              [ngStyle]="{ 'background-color': getAvatarColor(selectedPublication?.username || '') }"
+            >
               {{ selectedPublication.username.charAt(0).toUpperCase() }}
             </div>
             <div class="ml-3 flex-1">
               <div class="text-sm text-white font-semibold">
-                {{ selectedPublication.username }} 
-                <span class="text-gray-500">{{ selectedPublication.email }} · {{ tiempoTranscurrido(selectedPublication.date) }}</span>
+                {{ selectedPublication.username }}
+                <span class="text-gray-500">
+                  {{ selectedPublication.email }} · {{ tiempoTranscurrido(selectedPublication.date) }}
+                </span>
               </div>
               <p class="mt-1">{{ selectedPublication.text }}</p>
             </div>
@@ -137,7 +177,6 @@
         </div>
       </div>
     </div>
-
   </main>
 
   <!--Sección Derecha-->

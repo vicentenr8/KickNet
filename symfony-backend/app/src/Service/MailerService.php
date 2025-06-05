@@ -14,33 +14,63 @@ class MailerService
         $this->mailer = $mailer;
     }
 
-public function sendVerificationEmail(string $to, string $url): void
-{
-
-    $html = <<<HTML
-    <div style="font-family: Arial, sans-serif; color: #333; background-color: #f9f9f9; padding: 20px;">
-        <div style="max-width: 600px; margin: auto; background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 30px;">
-            <div style="text-align: center; margin-bottom: 30px;">
+    public function sendVerificationEmail(string $to, string $url): void
+    {
+        $html = <<<HTML
+        <div style="font-family: Arial, sans-serif; background-color: #000000; color: #eee; padding: 20px;">
+            <div style="max-width: 600px; margin: auto; background-color: #121212; border-radius: 12px; padding: 30px; text-align: center;">
+                
+                <!-- Logo -->
+                <div style="margin-bottom: 30px;">
+                    <img src="https://yourdomain.com/logo-kicknet.svg" alt="Kicknet Logo" style="max-width: 150px; height: auto; margin: 0 auto;" />
+                </div>
+                
+                <!-- Heading -->
+                <h2 style="font-weight: 700; font-size: 24px; color: #1DA1F2; margin-bottom: 15px;">¡Bienvenido a Kicknet!</h2>
+                
+                <!-- Text -->
+                <p style="font-size: 16px; color: #ccc; margin-bottom: 30px;">
+                    Gracias por registrarte. Para completar tu registro y verificar tu cuenta, por favor haz clic en el siguiente botón:
+                </p>
+                
+                <!-- Button -->
+                <a href="{$url}" 
+                   style="
+                    display: inline-block;
+                    background-color: #1DA1F2; 
+                    color: white; 
+                    text-decoration: none; 
+                    padding: 12px 30px; 
+                    border-radius: 9999px; 
+                    font-weight: 600;
+                    font-size: 16px;
+                    transition: background-color 0.3s ease;
+                    "
+                   onmouseover="this.style.backgroundColor='#0d8ddb';"
+                   onmouseout="this.style.backgroundColor='#1DA1F2';"
+                >
+                    Verificar mi cuenta
                 </a>
+                
+                <!-- Note -->
+                <p style="color: #777; font-size: 14px; margin-top: 30px;">
+                    Si no te registraste en nuestro sitio, puedes ignorar este correo.
+                </p>
+                
+                <!-- Footer -->
+                <p style="margin-top: 40px; font-size: 12px; color: #555;">
+                    © 2025 Kicknet – Todos los derechos reservados
+                </p>
             </div>
-            <h2 style="color: #2c3e50;">Bienvenido al Museo de la Cartuja</h2>
-            <p>Gracias por registrarte. Para completar tu registro y verificar tu cuenta, por favor haz clic en el siguiente enlace:</p>
-            <p style="text-align: center; margin: 30px 0;">
-                <a href="{$url}" style="background-color: #2c3e50; color: white; padding: 12px 20px; border-radius: 4px; text-decoration: none;">Verificar mi cuenta</a>
-            </p>
-            <p>Si no te registraste en nuestro sitio, puedes ignorar este correo.</p>
-            <p style="margin-top: 40px; font-size: 12px; color: #999;">© Museo de la Cartuja – Todos los derechos reservados</p>
         </div>
-    </div>
-    HTML;
+        HTML;
 
-    $email = (new Email())
-        ->from('Kicknet <vicentenr8@gmail.com>')
-        ->to($to)
-        ->subject('Verifica tu cuenta - Kicknet')
-        ->html($html);
+        $email = (new Email())
+            ->from('Kicknet <vicentenr8@gmail.com>')
+            ->to($to)
+            ->subject('Verifica tu cuenta - Kicknet')
+            ->html($html);
 
-    $this->mailer->send($email);
-}
-
+        $this->mailer->send($email);
+    }
 }

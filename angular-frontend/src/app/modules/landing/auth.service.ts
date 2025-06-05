@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable} from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 interface LoginData {
   email: string;
@@ -32,7 +33,7 @@ export class AuthService {
 
   private readonly USER_KEY = 'currentUser';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   login(userData: LoginData): Observable<User> {
     return this.http.post<any>(this.loginUrl, userData).pipe(
@@ -58,6 +59,7 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem(this.USER_KEY);
+    this.router.navigate(['']);
   }
 
   getCurrentUser(): User | null {

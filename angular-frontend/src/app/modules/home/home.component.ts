@@ -75,7 +75,7 @@ export class HomeComponent implements OnInit {
           user_id: this.user!.id,
         });
         this.mensagges = '';
-        this.selectedImage = undefined;
+      
       },
       error: (err) => {
         console.error('Error al publicar', err);
@@ -126,11 +126,16 @@ export class HomeComponent implements OnInit {
 
   onImageSelected(event: any) {
     const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => (this.selectedImage = reader.result as string);
-      reader.readAsDataURL(file);
-    }
+    if (!file) return;
+  
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.selectedImage = reader.result as string;
+  
+      // Guardar la imagen en localStorage
+      localStorage.setItem('imagenTemporal', this.selectedImage);
+    };
+    reader.readAsDataURL(file);
   }
 
   get characterCount(): number {
@@ -202,6 +207,10 @@ export class HomeComponent implements OnInit {
         console.error('Error eliminando publicación', err);
       }
     });
+  }
+
+  logout() {
+    this.authService.logout();
   }
   
   
