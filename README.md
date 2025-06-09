@@ -62,7 +62,7 @@ npm install
 ng serve
 ```
 
-#🧩 Funcionalidades Futuras
+# 🧩 Funcionalidades Futuras
 
 - 👤 Seguidores y seguidos
 
@@ -72,5 +72,5 @@ ng serve
 
 - 🏆 Preddiciones de usuarios (1, X, 2)
 
-#👤 Autor
+# 👤 Autor
 Desarrollado por Vicente Navas Rojas
