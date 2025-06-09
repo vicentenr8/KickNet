@@ -5,7 +5,6 @@ Kicknet es una red social centrada exclusivamente en el fútbol, que permite a l
 ## 🚀 Características
 
 - 🗣️ **Publicaciones** estilo "feed", como X (antes Twitter).
-- 📊 **Sistema de pronósticos** en tiempo real (1X2) con estadísticas de participación.
 - 🌐 **Interfaz moderna** adaptada a escritorio y móvil.
 - 📅 Listado de partidos del día con información relevante.
 - 👤 Avatar generado por iniciales.
@@ -28,7 +27,8 @@ Kicknet es una red social centrada exclusivamente en el fútbol, que permite a l
 
 ### Backend (Symfony)
 
-# Clonar el repositorio
+**Clonar el repositorio**
+ ``bash
 git clone https://github.com/tuusuario/kicknet-backend.git
 cd kicknet-backend
 
