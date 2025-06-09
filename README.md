@@ -28,28 +28,39 @@ Kicknet es una red social centrada exclusivamente en el fútbol, que permite a l
 ### Backend (Symfony)
 
 **Clonar el repositorio**
- ``bash
+   ```bash
 git clone https://github.com/tuusuario/kicknet-backend.git
 cd kicknet-backend
+ ```
 
-# Instalar dependencias
+**Instalar dependencias**
+```bash
 composer install
+```
 
-# Configurar archivo .env con la conexión a base de datos
+**Configurar archivo .env con la conexión a base de datos**
 
-# Ejecutar servidor
+**Ejecutar servidor**
+```bash
 symfony server:start
+```
 
 # FrontEnd (Angular)
-# Clonar el repositorio
+**Clonar el repositorio**
 git clone https://github.com/tuusuario/kicknet-frontend.git
+```bash
 cd kicknet-frontend
+```
 
-# Instalar dependencias
+**Instalar dependencias**
+```bash
 npm install
+```
 
-# Ejecutar aplicación
+**Ejecutar aplicación**
+```bash
 ng serve
+```
 
 # Funcionalidades Futuras
 
