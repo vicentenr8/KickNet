@@ -1,142 +1,76 @@
-# 🍽️ Fray Melitón – Renovación Web y Sistema de Gestión
+# ⚽ Kicknet
 
-Proyecto de rediseño completo para la web del restaurante **Fray Melitón**, con el objetivo de ofrecer una experiencia moderna, funcional e intuitiva tanto para los clientes como para el equipo de gestión.
+Kicknet es una red social centrada exclusivamente en el fútbol, que permite a los usuarios compartir publicaciones, interactuar con otros aficionados al fútbol. La plataforma ofrece una experiencia moderna e intuitiva adaptado a todos los tamaños de dispositivos.
 
-## Objetivo
+## 🚀 Características
 
-Transformar el sitio actual (WordPress) en una plataforma personalizada donde:
+- 🗣️ **Publicaciones** estilo "feed", como X (antes Twitter).
+- 🌐 **Interfaz moderna** adaptada a escritorio y móvil.
+- 📅 Listado de partidos del día con información relevante.
+- 👤 Avatar generado por iniciales.
+- 🔐 Autenticación y verificación de usuarios.
+- 🧾 Contador de caracteres al publicar.
 
-- Los usuarios puedan:
-  - Consultar la carta actualizada sin necesidad de registrarse.
-  - Hacer reservas online de forma sencilla.
-  - Obtener información general del restaurante desde cualquier dispositivo.
+## 🛠️ Tecnologías utilizadas
 
-- Los administradores puedan:
-  - Gestionar reservas y disponibilidad.
-  - Editar la carta en tiempo real.
-  - Controlar todo desde un único panel de administración.
+### Frontend
+- **Angular** + **TypeScript**
+- **TailwindCSS**
+- **HTML5**
 
-- La carta esté siempre accesible mediante código QR desde las mesas o redes sociales.
+### Backend
+- **Symfony** (PHP)
+- **PostgresSQL**
+- API RESTful para autenticación, gestión de usuarios, publicaciones, comentarios y pronósticos.
 
----
+## 📦 Instalación y ejecución
 
-## ⚙️ Funcionalidades Principales
+### Backend (Symfony)
 
-### 1. Landing Page Mejorada
+**Clonar el repositorio**
+   ```bash
+git clone https://github.com/tuusuario/kicknet-backend.git
+cd kicknet-backend
+ ```
 
-Inspirada en la actual página: [fraymeliton.es](https://fraymeliton.es)
-
-Secciones clave:
-
-- Quiénes somos / historia  
-- Carta dividida por categorías (entrantes, principales, postres, bebidas)  
-- Reservas online  
-- Horarios y contacto  
-- Mapa de ubicación  
-- Reseñas o testimonios  
-- Página dedicada a la carta (para uso con código QR)
-
----
-
-### 2. Gestión de Reservas
-
-#### Para clientes (sin login)
-
-- Reserva rápida con: nombre, email, teléfono, fecha, hora, nº de personas, comentarios.  
-- Confirmación automática por email.
-
-#### Para usuarios registrados
-
-- Ver historial de reservas.  
-- Editar o cancelar (hasta X días antes).  
-- Solicitud de soporte en caso de incidencias.
-
-#### Para administradores
-
-- Ver y gestionar todas las reservas desde el panel.  
-- Filtros por fecha, estado y nº de personas.  
-- Crear/modificar/cancelar reservas (incluso hechas en persona).
-
----
-
-### 3. Gestión de Disponibilidad
-
-- Configurar horarios y franjas disponibles.  
-- Limitar nº de mesas o comensales por franja.  
-- Bloquear fechas especiales (festivos, vacaciones, eventos).
-
----
-
-### 4. Carta Dinámica
-
-Uno de los puntos clave del sistema:
-
-- Carta cargada desde base de datos.  
-- Gestión total desde el panel: añadir, editar, ocultar platos.  
-- Opción de marcar platos como “no disponible”.  
-- Categorías personalizables (con menús especiales o por alérgenos).  
-- Siempre actualizada y visible para todos los usuarios.
-
----
-
-### 5. Código QR para Carta
-
-- Generación automática de un QR que enlaza a la carta online.  
-- Escaneable desde mesas o redes sociales.  
-- Acceso directo a versión móvil sin descarga.
-
----
-
-## 👥 Roles y Permisos
-
-| Rol                | Acciones disponibles                                              |
-|--------------------|-------------------------------------------------------------------|
-| Visitante          | Ver carta, reservar sin cuenta                                    |
-| Usuario registrado | Ver historial, editar y cancelar reservas                         |
-| Administrador      | Gestionar carta, reservas, disponibilidad, horarios, etc.         |
-
----
-
-
-## ✅ Requisitos Funcionales
-
-### Para usuarios no registrados
-
-- Acceso libre a la carta.  
-- Realizar reservas sin crear cuenta.  
-- Consultar ubicación y contacto.
-
-### Para usuarios registrados
-
-- Gestionar reservas pasadas y futuras.
-
-### Para administradores
-
-- Modificar la carta en tiempo real.  
-- Gestionar reservas (todas).  
-- Configurar horarios y disponibilidad.
-
----
-
-## 🔮 Mejoras Futuras
-
-- Notificaciones automáticas por email (ej: recordatorios de reserva).  
-- Estadísticas de demanda por plato y gestión de stock anticipada.  
-- Integración con Google Calendar.  
-- Chat de atención con rol de gestor de reservas.
-
----
-
-## 🐳 Clonar y ejecutar con Docker
-
-### 📦 Clonar el Repositorio
-
+**Instalar dependencias**
 ```bash
-git clone git@github.com:CodeArts-Solutions/elephants-B-Fray-Meliton.git
+composer install
 ```
 
-### Levantar los contenedores de Docker
+**Configurar archivo .env con la conexión a base de datos**
 
+**Ejecutar servidor**
 ```bash
-docker compose up -d
+symfony server:start
 ```
+
+# FrontEnd (Angular)
+**Clonar el repositorio**
+git clone git@github.com:vicentenr8/KickNet.git
+```bash
+cd kicknet-frontend
+```
+
+**Instalar dependencias**
+```bash
+npm install
+```
+
+**Ejecutar aplicación**
+```bash
+ng serve
+```
+
+# 🧩 Funcionalidades Futuras
+
+- 👤 Seguidores y seguidos
+
+- 🔔 Sistema de notificaciones.
+
+- 💬 Chat entre usuarios.
+
+- 🏆 Preddiciones de usuarios (1, X, 2)
+
+# 👤 Autor
+Desarrollado por Vicente Navas Rojas
