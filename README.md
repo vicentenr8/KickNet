@@ -61,5 +61,5 @@ ng serve
 
 - 🏆 Preddiciones de usuarios (1, X, 2)
 
-#Autor
+# Autor
 Desarrollado por Vicente Navas Rojas
