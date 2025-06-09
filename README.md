@@ -1,6 +1,6 @@
 # ⚽ Kicknet
 
-Kicknet es una red social centrada exclusivamente en el fútbol, que permite a los usuarios compartir publicaciones, interactuar con otros fanáticos y hacer pronósticos de partidos (1X2) en tiempo real. La plataforma ofrece una experiencia moderna, intuitiva y personalizable con soporte para modo claro y oscuro.
+Kicknet es una red social centrada exclusivamente en el fútbol, que permite a los usuarios compartir publicaciones, interactuar con otros aficionados al fútbol. La plataforma ofrece una experiencia moderna e intuitiva adaptado a todos los tamaños de dispositivos.
 
 ## 🚀 Características
 
@@ -47,7 +47,7 @@ symfony server:start
 
 # FrontEnd (Angular)
 **Clonar el repositorio**
-git clone https://github.com/tuusuario/kicknet-frontend.git
+git clone git@github.com:vicentenr8/KickNet.git
 ```bash
 cd kicknet-frontend
 ```
@@ -62,7 +62,7 @@ npm install
 ng serve
 ```
 
-# Funcionalidades Futuras
+#🧩 Funcionalidades Futuras
 
 - 👤 Seguidores y seguidos
 
@@ -72,5 +72,5 @@ ng serve
 
 - 🏆 Preddiciones de usuarios (1, X, 2)
 
-# Autor
+#👤 Autor
 Desarrollado por Vicente Navas Rojas
