@@ -1,23 +1,70 @@
 <div class="p-4 max-h-[600px] overflow-auto">
   <h2 class="text-xl font-bold mb-4 text-center">Partidos de Hoy</h2>
 
-  <div *ngFor="let leagueName of getLeagues()">
-    <button (click)="LeagueOpener(leagueName)" 
-            class="w-full text-left bg-gray-800 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded mb-2">
-      {{ leagueName }}
-      <span class="float-right">{{ isLeagueOpen(leagueName) ? '▲' : '▼' }}</span>
-    </button>
+  <div *ngFor="let league of getLeagues()">
+    <h2 (click)="LeagueOpener(league)" class="cursor-pointer text-lg font-semibold text-gray-800 hover:text-blue-600">
+      {{league}}
+    </h2>
+  
+    <div *ngIf="isLeagueOpen(league)">
+      <div *ngFor="let game of fixturesByLeague[league]" class="mb-6 p-4 bg-gray-100 rounded-lg shadow-sm">
+        <p class="text-center font-medium text-gray-800 mb-2">
+          {{game.teams?.home?.name || 'Desconocido'}} vs {{game.teams?.away?.name || 'Desconocido'}}
+        </p>
+  
+        <div *ngIf="votesByGame[game.fixture.id] as votes" class="space-y-3">
+          <!-- Botones de votación -->
+          <div class="flex justify-center gap-4">
+            <button 
+              [disabled]="hasVoted(game.fixture.id)" 
+              (click)="sendForecast(game, '1')"
+              class="rounded-full bg-white text-gray-800 px-6 py-2 font-medium border border-gray-300 hover:bg-gray-200 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
+              1 ({{votes.percentages['1'] || 0}}%)
+            </button>
+            <button 
+              [disabled]="hasVoted(game.fixture.id)" 
+              (click)="sendForecast(game, 'X')"
+              class="rounded-full bg-black text-white px-6 py-2 font-medium border border-white hover:bg-gray-800 disabled:bg-gray-500 disabled:cursor-not-allowed transition-colors">
+              X ({{votes.percentages['X'] || 0}}%)
+            </button>
+            <button 
+              [disabled]="hasVoted(game.fixture.id)" 
+              (click)="sendForecast(game, '2')"
+              class="rounded-full bg-white text-gray-800 px-6 py-2 font-medium border border-gray-300 hover:bg-gray-200 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
+              2 ({{votes.percentages['2'] || 0}}%)
+            </button>
+          </div>
 
-    <div *ngIf="isLeagueOpen(leagueName)" class="mb-6">
-      <ul>
-        <li *ngFor="let match of fixturesByLeague[leagueName]" ...>
-          <!-- detalles partido -->
-        </li>
-      </ul>
+          <!-- Barra de progreso dividida en tres -->
+          <div class="w-full bg-gray-200 rounded-full h-6 flex overflow-hidden">
+            <div 
+              class="bg-blue-500 h-full flex items-center justify-center text-xs text-white font-medium" 
+              [style.width]="(votes.percentages['1'] || 0) + '%'"
+              [ngClass]="{'min-w-[10%]': votes.percentages['1'] > 0}">
+              {{ votes.percentages['1'] > 0 ? (votes.percentages['1'] + '%') : '' }}
+            </div>
+            <div 
+              class="bg-gray-500 h-full flex items-center justify-center text-xs text-white font-medium" 
+              [style.width]="(votes.percentages['X'] || 0) + '%'"
+              [ngClass]="{'min-w-[10%]': votes.percentages['X'] > 0}">
+              {{ votes.percentages['X'] > 0 ? (votes.percentages['X'] + '%') : '' }}
+            </div>
+            <div 
+              class="bg-red-500 h-full flex items-center justify-center text-xs text-white font-medium" 
+              [style.width]="(votes.percentages['2'] || 0) + '%'"
+              [ngClass]="{'min-w-[10%]': votes.percentages['2'] > 0}">
+              {{ votes.percentages['2'] > 0 ? (votes.percentages['2'] + '%') : '' }}
+            </div>
+          </div>
+
+          <!-- Total de votos -->
+          <p class="text-center text-sm text-gray-600">Total votos: {{votes.totalVotes || 0}}</p>
+        </div>
+      </div>
     </div>
   </div>
 
   <div *ngIf="!getLeagues || getLeagues().length === 0" class="text-center text-gray-400 mt-10">
-    Cargando partidos...
+    <p>No hay partidos programados para hoy.</p>
   </div>
 </div>

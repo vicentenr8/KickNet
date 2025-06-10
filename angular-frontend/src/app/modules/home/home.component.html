@@ -11,7 +11,7 @@
     >
       {{ userInitial }}
     </div>
-    <h2 class="text-xl font-semibold mt-4">{{ user?.username }}</h2>
+    <h2 class="text-xl font-semibold mt-4">&#64;{{ user?.username }}</h2>
     <p class="text-gray-400">{{ user?.email }}</p>
     <div class="flex gap-4 mt-4 text-center">
       <div>
@@ -41,7 +41,9 @@
     class="w-full lg:w-6/12 border-x border-gray-800"
   >
     <!-- Título -->
-    <h1 class="text-white text-2xl font-semibold border-b-4 border-blue-500 pb-2 px-4 mt-4">
+    <h1
+      class="text-white text-2xl font-semibold border-b-4 border-blue-500 pb-2 px-4 mt-4"
+    >
       Para ti
     </h1>
 
@@ -50,7 +52,9 @@
       <div class="flex items-start px-4">
         <div
           class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xl mt-3"
-          [ngStyle]="{ 'background-color': getAvatarColor(user?.username || '') }"
+          [ngStyle]="{
+            'background-color': getAvatarColor(user?.username || '')
+          }"
         >
           {{ userInitial }}
         </div>
@@ -65,7 +69,10 @@
       <!-- Barra de herramientas -->
       <div class="flex justify-between items-center px-4 mt-2">
         <div>
-          <label for="imgUpload" class="cursor-pointer text-gray-500 hover:text-gray-300">
+          <label
+            for="imgUpload"
+            class="cursor-pointer text-gray-500 hover:text-gray-300"
+          >
             <i class="fa-regular fa-image text-xl"></i>
             <input
               id="imgUpload"
@@ -120,7 +127,7 @@
         </div>
         <div class="ml-3 flex-1">
           <div class="text-sm text-white font-semibold">
-            {{ pub.username }}
+            &#64;{{ pub.username }}
             <span class="text-gray-500">
               {{ pub.email }} · {{ tiempoTranscurrido(pub.date) }}
             </span>
@@ -132,13 +139,24 @@
             class="rounded-lg mt-3 max-h-[400px] object-contain border border-gray-700"
           />
           <div class="flex items-center gap-5 mt-2 text-gray-400">
-            <i class="fa-regular fa-heart hover:text-red-500 cursor-pointer"></i>
+            <button
+              (click)="toggleLike()"
+              class="transition-transform duration-300 ease-in-out "
+              [ngClass]="{
+                'scale-125 text-red-500': isLiked,
+                'font-semibold hover:text-red-500 cursor-pointer' : !isLiked
+              }"
+            >
+              <i [ngClass]="isLiked ? 'fas fa-heart' : 'far fa-heart'"></i>
+            </button>
             <button
               (click)="openCommentModal(pub)"
               class="hover:text-blue-500 cursor-pointer"
             >
               <i class="fa-regular fa-comment"></i>
-              <span class="font-semibold px-2">{{ commentsCountMap[pub.id!] || 0 }}</span>
+              <span class="font-semibold px-2">{{
+                commentsCountMap[pub.id!] || 0
+              }}</span>
             </button>
           </div>
         </div>
@@ -164,15 +182,20 @@
           <div class="flex items-start">
             <div
               class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xl"
-              [ngStyle]="{ 'background-color': getAvatarColor(selectedPublication?.username || '') }"
+              [ngStyle]="{
+                'background-color': getAvatarColor(
+                  selectedPublication?.username || ''
+                )
+              }"
             >
               {{ selectedPublication.username.charAt(0).toUpperCase() }}
             </div>
             <div class="ml-3 flex-1">
               <div class="text-sm text-white font-semibold">
-                {{ selectedPublication.username }}
+                &#64;{{ selectedPublication.username }}
                 <span class="text-gray-500">
-                  {{ selectedPublication.email }} · {{ tiempoTranscurrido(selectedPublication.date) }}
+                  {{ selectedPublication.email }} ·
+                  {{ tiempoTranscurrido(selectedPublication.date) }}
                 </span>
               </div>
               <p class="mt-1">{{ selectedPublication.text }}</p>
@@ -211,15 +234,18 @@
             <div class="flex items-start">
               <div
                 class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg"
-                [ngStyle]="{ 'background-color': getAvatarColor(comentario.username) }"
+                [ngStyle]="{
+                  'background-color': getAvatarColor(comentario.username)
+                }"
               >
                 {{ comentario.username.charAt(0).toUpperCase() }}
               </div>
               <div class="ml-3">
                 <div class="text-sm font-semibold text-white">
-                  {{ comentario.username }}
+                  &#64;{{ comentario.username }}
                   <span class="text-gray-500 text-xs">
-                    · {{ tiempoTranscurrido(comentario.date) }}
+                    {{ comentario.email }} ·
+                    {{ tiempoTranscurrido(comentario.date) }}
                   </span>
                 </div>
                 <p class="text-white mt-1">{{ comentario.content }}</p>
@@ -249,21 +275,33 @@
   >
     <button
       aria-label="Inicio"
-      class="text-white text-xl hover:text-blue-500"
+      [ngClass]="{
+        'text-blue-500': activatioSection === 'feed',
+        'text-white': activatioSection !== 'feed'
+      }"
+      class="text-xl transition-colors duration-300"
       (click)="showFeed()"
     >
       <i class="fa-solid fa-house"></i>
     </button>
     <button
       aria-label="Perfil"
-      class="text-white text-xl hover:text-blue-500"
+      [ngClass]="{
+        'text-blue-500': activatioSection === 'left',
+        'text-white': activatioSection !== 'left'
+      }"
+      class="text-xl transition-colors duration-300"
       (click)="showLeft()"
     >
       <i class="fa-solid fa-user"></i>
     </button>
     <button
       aria-label="Partidos"
-      class="text-white text-xl hover:text-blue-500"
+      [ngClass]="{
+        'text-blue-500': activatioSection === 'right',
+        'text-white': activatioSection !== 'right'
+      }"
+      class="text-xl transition-colors duration-300"
       (click)="showRight()"
     >
       <i class="fa-solid fa-futbol"></i>

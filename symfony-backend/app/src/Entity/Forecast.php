@@ -28,10 +28,6 @@ class Forecast
     #[ORM\JoinColumn(nullable: false)]
     private ?Game $game = null;
 
-    #[ORM\Column(type: "integer", nullable: false)]
-    private $externalGameId;
-
-
     public function getId(): ?int
     {
         return $this->id;
@@ -80,18 +76,6 @@ class Forecast
     public function setGame(?Game $game): static
     {
         $this->game = $game;
-
-        return $this;
-    }
-
-    public function getExternalGameId(): ?int
-    {
-        return $this->externalGameId;
-    }
-
-    public function setExternalGameId(int $externalGameId): self
-    {
-        $this->externalGameId = $externalGameId;
 
         return $this;
     }

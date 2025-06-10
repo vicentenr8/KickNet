@@ -2,51 +2,76 @@
 
 namespace App\Controller;
 
+use App\Entity\Team;
 use App\Repository\GameRepository;
+use App\Repository\TeamRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/api/games')]
 class GameController extends AbstractController
 {
-    #[Route('/get-or-create/{externalGameId}', name: 'game_get_or_create', methods: ['GET'])]
-public function getOrCreateGame(
-    int $externalGameId, 
-    GameRepository $gameRepository,
-    EntityManagerInterface $em
-): JsonResponse
-{
-    // Buscar juego existente
-    $game = $gameRepository->findOneByExternalGameId($externalGameId);
+    private $em;
+    private $gameRepository;
+    private $teamRepository;
 
-    if (!$game) {
-        $externalGameData = [
-            'gameDate' => new \DateTime(), // fecha actual por ejemplo
-            'competition' => 'Premier League',
-            'localTeamName' => 'Team A',
-            'awayTeamName' => 'Team B',
-        ];
-
-        // Crear nuevo objeto Game y setear campos con datos externos
-        $game = new \App\Entity\Game();
-        $game->setExternalGameId($externalGameId);
-        $game->setGameDate($externalGameData['gameDate']);
-        $game->setCompetition($externalGameData['competition']);
-
-        $em->persist($game);
-        $em->flush();
+    public function __construct(EntityManagerInterface $em, GameRepository $gameRepository, TeamRepository $teamRepository)
+    {
+        $this->em = $em;
+        $this->gameRepository = $gameRepository;
+        $this->teamRepository = $teamRepository;
     }
 
-    // Devolver el partido, puede ser para usar luego en el pronóstico
-    return $this->json([
-        'id' => $game->getId(),
-        'externalGameId' => $game->getExternalGameId(),
-        'gameDate' => $game->getGameDate()->format('Y-m-d H:i:s'),
-        'competition' => $game->getCompetition(),
-        // Añade lo que necesites
-    ]);
-}
+    #[Route('/get-or-create/{externalGameId}', name: 'game_get_or_create', methods: ['GET'])]
+    public function getOrCreateGame(int $externalGameId): JsonResponse
+    {
+        $game = $this->gameRepository->findOneBy(['externalGameId' => $data['game_id']]);
 
+        if (!$game) {
+            $competition = $data['competition'] ?? 'Competición X';
+            $localTeamName = $data['localTeamName'] ?? 'Equipo Local';
+            $awayTeamName = $data['awayTeamName'] ?? 'Equipo Visitante';
+        
+            $localteam = $this->teamRepository->findOneBy(['teamName' => $localTeamName]);
+            if (!$localteam) {
+                $localteam = new Team();
+                $localteam->setTeamName($localTeamName);
+                $localteam->setCountry('Desconocido');
+                $localteam->setLeague('Desconocida');
+                $this->em->persist($localteam);
+                $this->em->flush();  // flush aquí
+            }
+        
+            $awayteam = $this->teamRepository->findOneBy(['teamName' => $awayTeamName]);
+            if (!$awayteam) {
+                $awayteam = new Team();
+                $awayteam->setTeamName($awayTeamName);
+                $awayteam->setCountry('Desconocido');
+                $awayteam->setLeague('Desconocida');
+                $this->em->persist($awayteam);
+                $this->em->flush();  // flush aquí
+            }
+        
+            $game = new Game();
+            $game->setExternalGameId($data['game_id']);
+            $game->setGameDate(new \DateTime());
+            $game->setCompetition($competition);
+            $game->setLocalTeam($localteam);
+            $game->setAwayTeam($awayteam);
+        
+            $this->em->persist($game);
+            $this->em->flush();
+        }
+        
+        return $this->json([
+            'id' => $game->getId(),
+            'externalGameId' => $game->getExternalGameId(),
+            'gameDate' => $game->getGameDate()->format('Y-m-d H:i:s'),
+            'competition' => $game->getCompetition(),
+            'localTeam' => $game->getLocalTeam()->getTeamName(),
+            'awayTeam' => $game->getAwayTeam()->getTeamName(),
+        ]);
+    }
 }

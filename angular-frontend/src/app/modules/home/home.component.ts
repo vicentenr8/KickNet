@@ -18,7 +18,14 @@ export class HomeComponent implements OnInit {
   mensagges: string = '';
   selectedImage?: string;
   publications: Publication[] = [];
+  activatioSection: string = 'feed';
+  isLiked = false;
 
+  toggleLike() {
+    if (!this.isLiked) {
+      this.isLiked = true;
+    }
+  }
   user: User | null = null;
   userId: number = 0;
   avatarGenerator = new AvatarGenerator();
@@ -79,7 +86,7 @@ export class HomeComponent implements OnInit {
     this.publicationService.createPublication(payload).subscribe({
       next: (response: any) => {
         this.toastr.success('Publicación creada exitosamente');
-        const imagenTemporal = this.selectedImage
+        const imagenTemporal = this.selectedImage;
         this.selectedImage = undefined;
         this.publications.unshift({
           text: this.mensagges,
@@ -261,14 +268,17 @@ export class HomeComponent implements OnInit {
   // Métodos para cambiar vista móvil
   showFeed() {
     this.mobileView = 'feed';
+    this.activatioSection = 'feed'; // Cambia la sección activa a 'feed'
   }
 
   showLeft() {
     this.mobileView = 'left';
+    this.activatioSection = 'left'; // Cambia la sección activa a 'left'
   }
 
   showRight() {
     this.mobileView = 'right';
+    this.activatioSection = 'right'; // Cambia la sección activa a 'right'
   }
 
   isDesktop(): boolean {
@@ -314,4 +324,5 @@ interface Comment {
   content: string;
   date: Date; // o Date
   username: string; // <- asegúrate de que esto exista
+  email: string; // <- asegúrate de que esto exista
 }
