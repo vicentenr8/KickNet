@@ -79,13 +79,14 @@ export class HomeComponent implements OnInit {
     this.publicationService.createPublication(payload).subscribe({
       next: (response: any) => {
         this.toastr.success('Publicación creada exitosamente');
+        const imagenTemporal = this.selectedImage
         this.selectedImage = undefined;
         this.publications.unshift({
           text: this.mensagges,
           date: new Date(),
           email: this.user!.email,
           username: this.user!.username,
-          image: this.selectedImage,
+          image: imagenTemporal,
           user_id: this.user!.id,
         });
         this.mensagges = '';
@@ -146,6 +147,7 @@ export class HomeComponent implements OnInit {
     const reader = new FileReader();
     reader.onload = () => {
       this.selectedImage = reader.result as string;
+      console.log('Imagen seleccionada:', this.selectedImage);
       localStorage.setItem('imagenTemporal', this.selectedImage);
     };
     reader.readAsDataURL(file);
