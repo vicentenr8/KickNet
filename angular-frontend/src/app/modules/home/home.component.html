@@ -1,9 +1,8 @@
-<div
-  class="min-h-screen flex flex-col lg:flex-row bg-black text-white md:flex-row"
->
-  <!--Sección Izquierda-->
+<div class="min-h-screen flex flex-col bg-black text-white lg:flex-row">
+  <!-- Sección Izquierda -->
   <aside
-    class="hidden lg:flex lg:w-3/12 h-screen sticky top-0 flex flex-col items-center p-6 border-r border-gray-800"
+    *ngIf="mobileView === 'left' || isDesktop()"
+    class="w-full flex flex-col items-center lg:w-3/12 lg:flex flex-col items-center p-6 border-r border-gray-800 sticky top-0 h-auto lg:h-screen"
   >
     <!-- Avatar y datos del usuario -->
     <div
@@ -26,23 +25,23 @@
     </div>
 
     <!-- Botón Logout abajo -->
-    <div class="mt-auto w-full">
+    <div class="mt-auto w-full pt-8">
       <button
         (click)="logout()"
         class="w-full py-3 rounded-full bg-white text-black cursor-pointer hover:bg-white/60 transition-colors font-semibold"
       >
-        <i class="fas fa-sign-out-alt text-lg"></i>
-        Logout
+        <i class="fas fa-sign-out-alt text-lg"></i> Logout
       </button>
     </div>
   </aside>
 
-  <!-- Sección Central: Feed -->
-  <main class="w-full lg:w-6/12 border-x border-gray-800">
-    <!-- Título "Para ti" arriba -->
-    <h1
-      class="text-white text-2xl font-semibold border-b-4 border-blue-500 pb-2 px-4 mt-4"
-    >
+  <!-- Sección Central -->
+  <main
+    *ngIf="mobileView === 'feed' || isDesktop()"
+    class="w-full lg:w-6/12 border-x border-gray-800"
+  >
+    <!-- Título -->
+    <h1 class="text-white text-2xl font-semibold border-b-4 border-blue-500 pb-2 px-4 mt-4">
       Para ti
     </h1>
 
@@ -51,9 +50,7 @@
       <div class="flex items-start px-4">
         <div
           class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xl mt-3"
-          [ngStyle]="{
-            'background-color': getAvatarColor(user?.username || '')
-          }"
+          [ngStyle]="{ 'background-color': getAvatarColor(user?.username || '') }"
         >
           {{ userInitial }}
         </div>
@@ -68,10 +65,7 @@
       <!-- Barra de herramientas -->
       <div class="flex justify-between items-center px-4 mt-2">
         <div>
-          <label
-            for="imgUpload"
-            class="cursor-pointer text-gray-500 hover:text-gray-300"
-          >
+          <label for="imgUpload" class="cursor-pointer text-gray-500 hover:text-gray-300">
             <i class="fa-regular fa-image text-xl"></i>
             <input
               id="imgUpload"
@@ -106,7 +100,7 @@
       *ngFor="let pub of publications"
       class="p-4 border-b border-gray-700 relative"
     >
-      <!-- Botón eliminar  -->
+      <!-- Botón eliminar -->
       <button
         *ngIf="pub.user_id === userId"
         aria-label="Eliminar publicación"
@@ -115,7 +109,8 @@
       >
         <i class="fas fa-trash-alt cursor-pointer"></i>
       </button>
-      <!--info publicacion-->
+
+      <!-- info publicación -->
       <div class="flex items-start">
         <div
           class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xl"
@@ -123,7 +118,6 @@
         >
           {{ pub.username.charAt(0).toUpperCase() }}
         </div>
-
         <div class="ml-3 flex-1">
           <div class="text-sm text-white font-semibold">
             {{ pub.username }}
@@ -138,24 +132,20 @@
             class="rounded-lg mt-3 max-h-[400px] object-contain border border-gray-700"
           />
           <div class="flex items-center gap-5 mt-2 text-gray-400">
-            <i
-              class="fa-regular fa-heart hover:text-red-500 cursor-pointer"
-            ></i>
-            <!--modal comentarios-->
+            <i class="fa-regular fa-heart hover:text-red-500 cursor-pointer"></i>
             <button
-              (click)="oppenCommentModal(pub)"
+              (click)="openCommentModal(pub)"
               class="hover:text-blue-500 cursor-pointer"
             >
-              <i class="fa-regular fa-comment"></i
-              ><span class="font-semibold px-2">{{
-                commentsCountMap[pub.id!] || 0
-              }}</span>
+              <i class="fa-regular fa-comment"></i>
+              <span class="font-semibold px-2">{{ commentsCountMap[pub.id!] || 0 }}</span>
             </button>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- Modal Comentarios -->
     <div
       *ngIf="showCommentModal && selectedPublication"
       class="fixed inset-0 z-50 flex items-center justify-center bg-white/30 backdrop-blur-md"
@@ -174,11 +164,7 @@
           <div class="flex items-start">
             <div
               class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xl"
-              [ngStyle]="{
-                'background-color': getAvatarColor(
-                  selectedPublication?.username || ''
-                )
-              }"
+              [ngStyle]="{ 'background-color': getAvatarColor(selectedPublication?.username || '') }"
             >
               {{ selectedPublication.username.charAt(0).toUpperCase() }}
             </div>
@@ -186,16 +172,15 @@
               <div class="text-sm text-white font-semibold">
                 {{ selectedPublication.username }}
                 <span class="text-gray-500">
-                  {{ selectedPublication.email }} ·
-                  {{ tiempoTranscurrido(selectedPublication.date) }}
+                  {{ selectedPublication.email }} · {{ tiempoTranscurrido(selectedPublication.date) }}
                 </span>
               </div>
               <p class="mt-1">{{ selectedPublication.text }}</p>
               <img
-              *ngIf="selectedPublication?.image"
-              [src]="selectedPublication.image"
-              class="rounded-lg mt-3 max-h-[260px] object-contain border border-gray-700"
-            />
+                *ngIf="selectedPublication?.image"
+                [src]="selectedPublication.image"
+                class="rounded-lg mt-3 max-h-[260px] object-contain border border-gray-700"
+              />
             </div>
           </div>
         </div>
@@ -207,7 +192,7 @@
           class="w-full p-4 rounded-xl resize-none border border-gray-700 bg-gray-900 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-6"
         ></textarea>
 
-        <div class="flex justify-end">
+        <div class="flex justify-end mb-8">
           <button
             (click)="publicarComentario()"
             class="px-5 py-2 rounded-full bg-blue-500 text-white font-semibold hover:bg-blue-600 transition"
@@ -215,27 +200,73 @@
             Publicar
           </button>
         </div>
+
+        <div
+          *ngIf="commentsForSelectedPublication.length > 0; else sinComentarios"
+        >
+          <div
+            *ngFor="let comentario of commentsForSelectedPublication"
+            class="mb-4 border-t border-gray-700 pt-4"
+          >
+            <div class="flex items-start">
+              <div
+                class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg"
+                [ngStyle]="{ 'background-color': getAvatarColor(comentario.username) }"
+              >
+                {{ comentario.username.charAt(0).toUpperCase() }}
+              </div>
+              <div class="ml-3">
+                <div class="text-sm font-semibold text-white">
+                  {{ comentario.username }}
+                  <span class="text-gray-500 text-xs">
+                    · {{ tiempoTranscurrido(comentario.date) }}
+                  </span>
+                </div>
+                <p class="text-white mt-1">{{ comentario.content }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <ng-template #sinComentarios>
+          <p class="text-gray-400 text-center">No hay comentarios aún.</p>
+        </ng-template>
       </div>
     </div>
   </main>
 
-  <!--Sección Derecha-->
-  <div class="hidden lg:flex lg:w-3/12 flex-col p-6 space-y-6">
+  <!-- Sección Derecha -->
+  <aside
+    *ngIf="mobileView === 'right' || isDesktop()"
+    class="w-full lg:w-3/12 flex-col p-6 space-y-6"
+  >
     <app-fixtures></app-fixtures>
-  </div>
-</div>
+  </aside>
 
-<!-- Footer para dispositivos móviles -->
-<div
-  class="lg:hidden fixed bottom-0 left-0 w-full bg-black border-t border-t-gray-800 flex justify-around py-2 pt-5 z-50"
->
-  <button aria-label="Inicio" class="text-white text-xl hover:text-blue-500">
-    <i class="fa-solid fa-house"></i>
-  </button>
-  <button aria-label="Perfil" class="text-white text-xl hover:text-blue-500">
-    <i class="fa-solid fa-user"></i>
-  </button>
-  <button aria-label="Partidos" class="text-white text-xl hover:text-blue-500">
-    <i class="fa-solid fa-futbol"></i>
-  </button>
+  <!-- Footer móvil -->
+  <footer
+    class="lg:hidden fixed bottom-0 left-0 w-full bg-black border-t border-gray-800 flex justify-around py-2 pt-5"
+  >
+    <button
+      aria-label="Inicio"
+      class="text-white text-xl hover:text-blue-500"
+      (click)="showFeed()"
+    >
+      <i class="fa-solid fa-house"></i>
+    </button>
+    <button
+      aria-label="Perfil"
+      class="text-white text-xl hover:text-blue-500"
+      (click)="showLeft()"
+    >
+      <i class="fa-solid fa-user"></i>
+    </button>
+    <button
+      aria-label="Partidos"
+      class="text-white text-xl hover:text-blue-500"
+      (click)="showRight()"
+    >
+      <i class="fa-solid fa-futbol"></i>
+    </button>
+  </footer>
 </div>

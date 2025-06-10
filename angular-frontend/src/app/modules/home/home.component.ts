@@ -5,7 +5,8 @@ import { FixturesComponent } from '../fixtures/fixtures.component';
 import { PublicationService } from './Publication.service';
 import { AuthService, User } from '../landing/auth.service';
 import { HttpClient } from '@angular/common/http';
-import { CommentService } from './Comment.service'; 
+import { CommentService } from './Comment.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-home',
@@ -26,13 +27,14 @@ export class HomeComponent implements OnInit {
   showCommentModal = false;
   selectedPublication: Publication | null = null;
   newCommentContent: string = '';
-
+  commentsForSelectedPublication: Comment[] = [];
 
   constructor(
     private publicationService: PublicationService,
     private authService: AuthService,
     private http: HttpClient,
-    private commentService: CommentService 
+    private commentService: CommentService,
+    private toastr: ToastrService
   ) {
     this.user = this.authService.getCurrentUser();
   }
@@ -42,31 +44,42 @@ export class HomeComponent implements OnInit {
     if (this.user) {
       this.userId = this.user.id;
     }
+    if (!this.isDesktop()) {
+      this.mobileView = 'feed';
+    }
+  }
+
+  ngAfterViewInit(): void {
+    window.addEventListener('resize', () => {
+      if (!this.isDesktop() && !this.mobileView) {
+        this.mobileView = 'feed';
+      }
+    });
   }
 
   publish() {
     const token = localStorage.getItem('token');
     if (!token) {
-      alert('No tienes token JWT, por favor inicia sesión');
+      this.toastr.error('Debes iniciar sesión para publicar.');
       return;
     }
 
     if (!this.mensagges.trim()) return;
     if (!this.user) {
-      console.error('Usuario no autenticado');
-      alert('Debes iniciar sesión para publicar.');
+      this.toastr.error('Debes iniciar sesión para publicar.');
       return;
     }
 
     const payload = {
       user_id: this.user.id,
       content: this.mensagges,
-      image: this.selectedImage ? this.selectedImage : null,  // Mantenemos por backend aunque no usemos en frontend
+      image: this.selectedImage ? this.selectedImage : null,
     };
 
     this.publicationService.createPublication(payload).subscribe({
       next: (response: any) => {
-        console.log('Publicación creada:', response);
+        this.toastr.success('Publicación creada exitosamente');
+        this.selectedImage = undefined;
         this.publications.unshift({
           text: this.mensagges,
           date: new Date(),
@@ -76,19 +89,20 @@ export class HomeComponent implements OnInit {
           user_id: this.user!.id,
         });
         this.mensagges = '';
-      
       },
       error: (err) => {
-        console.error('Error al publicar', err);
+        this.toastr.error('Error al crear la publicación');
         if (err.status === 401) {
-          alert('Tu sesión ha expirado o no estás autorizado. Por favor, inicia sesión de nuevo.');
-        } else {
-          alert('Hubo un error al publicar. Inténtalo de nuevo.');
+          this.toastr.error(
+            'Tu sesión ha expirado o no estás autorizado. Por favor, inicia sesión de nuevo.'
+          );
+          localStorage.removeItem('token');
+          this.authService.logout();
         }
       },
     });
   }
-  
+
   loadPublications() {
     this.publicationService.getPublications().subscribe({
       next: (response: any) => {
@@ -101,40 +115,37 @@ export class HomeComponent implements OnInit {
           user_id: pub.user_id,
           id: pub.id,
         }));
-  
-        // Aquí llamas a loadCommentsCount para cada publicación:
-        this.publications.forEach(pub => {
+
+        this.publications.forEach((pub) => {
           if (pub.id) {
             this.loadCommentsCount(pub.id);
           }
         });
       },
-      error: (err) => {
-        console.error('Error al cargar publicaciones:', err);
+      error: () => {
+        this.toastr.error('Error al cargar las publicaciones');
       },
     });
   }
-  
 
   tiempoTranscurrido(date: Date): string {
     const now = new Date();
-    const seconds = Math.floor((now.getTime() - new Date(date).getTime()) / 1000);
+    const seconds = Math.floor(
+      (now.getTime() - new Date(date).getTime()) / 1000
+    );
     if (seconds < 60) return 'Justo ahora';
     else if (seconds < 3600) return `${Math.floor(seconds / 60)} min`;
     else if (seconds < 86400) return `${Math.floor(seconds / 3600)} h`;
     else return `${Math.floor(seconds / 86400)} d`;
   }
 
-  
   onImageSelected(event: any) {
     const file = event.target.files[0];
     if (!file) return;
-  
+
     const reader = new FileReader();
     reader.onload = () => {
       this.selectedImage = reader.result as string;
-  
-      // Guardar la imagen en localStorage
       localStorage.setItem('imagenTemporal', this.selectedImage);
     };
     reader.readAsDataURL(file);
@@ -153,37 +164,62 @@ export class HomeComponent implements OnInit {
     return this.avatarGenerator.getAvatarColor(username);
   }
 
-  oppenCommentModal(pub: Publication): void {
+  openCommentModal(pub: Publication): void {
     this.showCommentModal = true;
     this.selectedPublication = pub;
+    this.loadComments(pub.id!);
   }
 
   closeCommentModal(): void {
     this.showCommentModal = false;
     this.selectedPublication = null;
     this.newCommentContent = '';
+    this.commentsForSelectedPublication = [];
+  }
+
+  loadComments(publicationId: number): void {
+    this.commentService.getComments(publicationId).subscribe({
+      next: (comments: any) => {
+        console.log('Comentarios recibidos:', comments);
+        this.commentsForSelectedPublication = comments;
+      },
+      error: (err) => {
+        this.toastr.error('Error al cargar comentarios');
+        console.error('Error al cargar comentarios', err);
+      },
+    });
   }
 
   publicarComentario(): void {
-    if (!this.newCommentContent.trim() || !this.selectedPublication) return;
-  
-    this.commentService.createComment({
-      content: this.newCommentContent,
-      user_id: this.userId,
-      publication_id: this.selectedPublication.id!
-    }).subscribe({
-      next: (res) => {
-        console.log('Comentario publicado:', res);
-        this.newCommentContent = '';
-        this.loadCommentsCount(this.selectedPublication!.id!);
-        this.closeCommentModal();
-      },
-      error: (err) => {
-        console.error('Error al publicar comentario:', err);
-      }
-    });
+    if (!this.selectedPublication) {
+      this.toastr.error('No hay publicación seleccionada para comentar');
+      return;
+    }
+    const trimmedText = this.newCommentContent.trim();
+    if (!trimmedText) {
+      this.toastr.warning('El comentario no puede estar vacío');
+      return;
+    }
+
+    this.commentService
+      .createComment({
+        content: this.newCommentContent,
+        user_id: this.userId,
+        publication_id: this.selectedPublication.id!,
+      })
+      .subscribe({
+        next: () => {
+          this.toastr.success('Comentario publicado exitosamente');
+          this.newCommentContent = '';
+          this.loadCommentsCount(this.selectedPublication!.id!);
+          this.loadComments(this.selectedPublication!.id!); // recarga comentarios para mostrar el nuevo
+        },
+        error: (err) => {
+          this.toastr.error('Error al publicar el comentario');
+          console.error('Error al publicar comentario', err);
+        },
+      });
   }
-  
 
   loadCommentsCount(publicationId: number) {
     this.commentService.countComments(publicationId).subscribe({
@@ -192,30 +228,50 @@ export class HomeComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error al obtener contador de comentarios', err);
-        this.commentsCountMap[publicationId] = 0; // fallback
+        this.commentsCountMap[publicationId] = 0;
       },
     });
   }
 
   eliminarPublicacion(publicationId: number) {
-    const confirmado = confirm('¿Seguro que quieres eliminar esta publicación?');
-    if (!confirmado) return;
-  
+    if (!confirm('¿Seguro que quieres eliminar esta publicación?')) return;
+
     this.publicationService.deletePublication(publicationId).subscribe({
       next: () => {
-        this.publications = this.publications.filter(p => p.id !== publicationId);
+        this.toastr.success('Publicación eliminada exitosamente');
+        this.publications = this.publications.filter(
+          (p) => p.id !== publicationId
+        );
       },
-      error: (err) => {
-        console.error('Error eliminando publicación', err);
-      }
+      error: () => {
+        this.toastr.error('Error al eliminar la publicación');
+      },
     });
   }
 
   logout() {
     this.authService.logout();
   }
-  
-  
+
+  // Variable para controlar qué sección mostrar en móvil
+  mobileView: 'feed' | 'left' | 'right' = 'feed';
+
+  // Métodos para cambiar vista móvil
+  showFeed() {
+    this.mobileView = 'feed';
+  }
+
+  showLeft() {
+    this.mobileView = 'left';
+  }
+
+  showRight() {
+    this.mobileView = 'right';
+  }
+
+  isDesktop(): boolean {
+    return window.innerWidth >= 1024;
+  }
 }
 
 class AvatarGenerator {
@@ -235,8 +291,7 @@ class AvatarGenerator {
       hash = username.charCodeAt(i) + ((hash << 5) - hash);
     }
     const absHash = Math.abs(hash);
-    const index = absHash % this.avatarColors.length;
-    return this.avatarColors[index];
+    return this.avatarColors[absHash % this.avatarColors.length];
   }
 }
 
@@ -248,4 +303,13 @@ interface Publication {
   username: string;
   image?: string;
   user_id?: number;
+}
+
+interface Comment {
+  id: number;
+  publicationId: number;
+  userId: number;
+  content: string;
+  date: Date; // o Date
+  username: string; // <- asegúrate de que esto exista
 }

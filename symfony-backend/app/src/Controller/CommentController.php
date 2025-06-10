@@ -140,4 +140,34 @@ class CommentController extends AbstractController
 
         return $this->json(['publication_id' => $publicationId, 'comments_count' => $count]);
     }
+
+    #[Route('/publication/{publicationId}', name: 'comment_by_publication', methods: ['GET'])]
+    public function getCommentsByPublication(int $publicationId, CommentRepository $commentRepository, PublicationRepository $publicationRepository): JsonResponse
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        $publication = $publicationRepository->find($publicationId);
+        if (!$publication) {
+            return $this->json(['error' => 'Publicación no encontrada'], 404);
+        }
+
+        $comments = $commentRepository->findBy(['publication' => $publication], ['commentDate' => 'DESC']);
+
+        $data = [];
+        foreach ($comments as $comment) {
+            $user = $comment->getUsers();
+            $data[] = [
+                'id'             => $comment->getId(),
+                'content'        => $comment->getCommentContent(),
+                'date'           => $comment->getCommentDate()->format('Y-m-d H:i:s'),
+                'user_id'        => $user ? $user->getId() : null,
+                'username'       => $user ? $user->getUsername() : 'Usuario Desconocido',
+                'email'          => $user ? $user->getEmail() : 'email@desconocido.com',
+                'publication_id' => $publicationId,
+            ];
+        }
+
+    return $this->json($data);
+    }
+
 }

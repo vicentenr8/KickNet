@@ -4,6 +4,8 @@ import { RouterModule, Router } from '@angular/router';  // Importa Router
 import { AuthService } from './auth.service';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @Component({
   selector: 'app-landing',
@@ -22,7 +24,7 @@ export class LandingComponent {
   registerUsername = '';
   registerConfirmPassword = '';
 
-  constructor(private authService: AuthService, private router: Router, private http: HttpClient) {} 
+  constructor(private authService: AuthService, private router: Router, private http: HttpClient, private toastr: ToastrService) {} 
   openModal() {
     this.isModalOpen = true;
   }
@@ -44,8 +46,7 @@ export class LandingComponent {
     this.authService.login({ email: this.loginEmail, password: this.loginPassword })
       .subscribe({
         next: (res) => {
-          alert('Login exitoso');
-          console.log('Login exitoso', res);
+          this.toastr.success('Login exitoso');
           localStorage.setItem('token', res.token ?? '');  // Guardar token
           this.closeModal();
           this.router.navigate(['/home']);  // Redirigir a /home
@@ -59,7 +60,7 @@ export class LandingComponent {
 
   register() {
     if (this.registerPassword !== this.registerConfirmPassword) {
-      alert('Las contraseñas no coinciden');
+      this.toastr.error('Las contraseñas no coinciden');
       return;
     }
   
@@ -71,12 +72,16 @@ export class LandingComponent {
   
     this.authService.register(userData).subscribe({
       next: res => {
-        console.log('Registro OK:', res);
+        this.toastr.info('Registro exitoso, verifica tu correo');
         this.closeSignUpModal();
       },
       error: err => {
         console.error('Error en registro:', err);
-        alert(err.error?.error || 'Error desconocido en registro');
+        if (err.status === 400) {
+          this.toastr.error('Error en el registro, verifica tus datos');
+        } else {
+          this.toastr.error('Error en el registro, inténtalo de nuevo más tarde');
+        }
       }
     });
   }

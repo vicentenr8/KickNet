@@ -1,36 +1,23 @@
 <div class="p-4 max-h-[600px] overflow-auto">
-    <h2 class="text-xl font-bold mb-4 text-center">Partidos de Hoy</h2>
-  
-    <div *ngFor="let leagueName of getLeagues()">
-        <!-- Botón encabezado para desplegar -->
-        <button
-          (click)="LeagueOpener(leagueName)"
-          class="w-full text-left px-4 py-2 mb-2 rounded-full bg-black border border-whiteS text-white font-semibold hover:bg-gray-700 transition"
-        >
-          {{ leagueName }}
-          <span class="float-right">
-            {{ isLeagueOpen(leagueName) ? '▲' : '▼' }}
-          </span>
-        </button>
-        
-    <div *ngIf="isLeagueOpen(leagueName)" class="mb-6">
+  <h2 class="text-xl font-bold mb-4 text-center">Partidos de Hoy</h2>
 
-    <ul>
-      <li *ngFor="let match of fixturesByLeague[leagueName]" class="border-b border-gray-200 py-2 flex justify-between items-center">
-        <div class="flex flex-col w-full">
-          <span class="font-semibold text-white">{{ match.teams.home.name }} vs {{ match.teams.away.name }}</span>
-          <span class="text-sm text-white">{{ match.fixture.date | date:'shortTime' }}</span>
-          <div class="flex flex-row gap-3 w-full">
-            <button (click)="sendForecast(match.fixture.id, '1')"  class="flex-1 rounded-full bg-white text-black cursor-pointer hover:bg-white/60 transition-colors mt-4 font-semibold">1</button>
-            <button (click)="sendForecast(match.fixture.id, 'X')" class="flex-1 rounded-full border border-white bg-black text-white cursor-pointer hover:bg-white/60 transition-colors mt-4 font-semibold">X</button>
-            <button (click)="sendForecast(match.fixture.id, '2')"  class="flex-1 rounded-full bg-white text-black cursor-pointer hover:bg-white/60 transition-colors mt-4 font-semibold">2</button>
-            </div>
-        </div>
-      </li>
-    </ul>
-    </div>
-  
-    <div *ngIf="!getLeagues && getLeagues.length === 0" class="text-center text-gray-400 mt-10">
-      Cargando partidos...
+  <div *ngFor="let leagueName of getLeagues()">
+    <button (click)="LeagueOpener(leagueName)" 
+            class="w-full text-left bg-gray-800 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded mb-2">
+      {{ leagueName }}
+      <span class="float-right">{{ isLeagueOpen(leagueName) ? '▲' : '▼' }}</span>
+    </button>
+
+    <div *ngIf="isLeagueOpen(leagueName)" class="mb-6">
+      <ul>
+        <li *ngFor="let match of fixturesByLeague[leagueName]" ...>
+          <!-- detalles partido -->
+        </li>
+      </ul>
     </div>
   </div>
+
+  <div *ngIf="!getLeagues || getLeagues().length === 0" class="text-center text-gray-400 mt-10">
+    Cargando partidos...
+  </div>
+</div>

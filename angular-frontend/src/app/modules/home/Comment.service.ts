@@ -10,8 +10,8 @@ export class CommentService {
   constructor(private http: HttpClient) {}
 
   // Obtener todos los comentarios
-  getComments() {
-    return this.http.get(this.apiUrl);
+  getComments(publicationId: number) {
+    return this.http.get(`${this.apiUrl}/publication/${publicationId}`);
   }
 
   // Crear comentario
