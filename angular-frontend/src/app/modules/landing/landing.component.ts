@@ -52,7 +52,16 @@ export class LandingComponent {
           this.router.navigate(['/home']);  // Redirigir a /home
         },
         error: (err) => {
-          alert('Error en el login');
+          //contraseña incoorecta
+          if(this.loginPassword && err.status === 401) {
+            this.toastr.error('Contraseña incorrecta');
+            return;
+          }
+          // email no registrado
+          if(this.loginEmail && err.status === 404) {
+            this.toastr.error('Email no registrado');
+            return;
+          }
           console.error('Error en login', err);
         }
       });

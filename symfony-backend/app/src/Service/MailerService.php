@@ -20,11 +20,6 @@ class MailerService
         <div style="font-family: Arial, sans-serif; background-color: #000000; color: #eee; padding: 20px;">
             <div style="max-width: 600px; margin: auto; background-color: #121212; border-radius: 12px; padding: 30px; text-align: center;">
                 
-                <!-- Logo -->
-                <div style="margin-bottom: 30px;">
-                    <img src="logo.svg" alt="Kicknet Logo" style="max-width: 150px; height: auto; margin: 0 auto;" />
-                </div>
-                
                 <!-- Heading -->
                 <h2 style="font-weight: 700; font-size: 24px; color: #1DA1F2; margin-bottom: 15px;">¡Bienvenido a Kicknet!</h2>
                 

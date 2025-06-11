@@ -10,7 +10,7 @@
     {{ errorMessage }}
   </div>
   <!--Titulo-->
-  <h1 class="text-2xl font-bold mb-6 text-white">Pronósticos de Partidos</h1>
+  <h1 class="text-2xl font-bold mb-6 text-white text-center">Pronósticos de Partidos</h1>
   <!-- Lista de ligas -->
   <ng-container *ngIf="!isLoading">
     <div *ngFor="let league of getLeagues()" class="mb-6">
@@ -104,4 +104,7 @@
       </div>
     </div>
   </ng-container>
+  <!-- Mensaje si no hay partidos -->
+  <div *ngIf="!isLoading" class="text-center text-gray-500">
+    No hay partidos disponibles.
 </div>
