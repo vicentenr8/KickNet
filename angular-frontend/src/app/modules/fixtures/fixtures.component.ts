@@ -1,14 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FixturesService } from './fixtures.service';
-import { ForecastService } from './forecast.service'; 
+import { ForecastService } from './forecast.service';
 import { AuthService } from '../landing/auth.service';
 import { ToastrService } from 'ngx-toastr';
+import { forkJoin } from 'rxjs';
 
-// Interfaces para tipado
 interface Team {
   name: string;
-  
 }
 
 interface Fixture {
@@ -18,18 +17,13 @@ interface Fixture {
 
 interface Game {
   fixture: Fixture;
-  teams: {
-    home: Team;
-    away: Team;
-  };
-  league: {
-    name: string;
-  };
+  teams: { home: Team; away: Team };
+  league: { name: string };
 }
 
 interface VoteData {
   votes: { [key: string]: number };
-  percentages: { [key: string]: number }; 
+  percentages: { [key: string]: number };
   totalVotes: number;
 }
 
@@ -43,50 +37,50 @@ export class FixturesComponent implements OnInit {
   fixturesByLeague: { [leagueName: string]: Game[] } = {};
   openLeagues: Set<string> = new Set();
   votesByGame: { [gameId: number]: VoteData } = {};
-  userVotes: Set<number> = new Set(); // Para saber en qué partidos ya votó el usuario
-
+  userVotes: Set<number> = new Set();
   sendingForecast: boolean = false;
   errorMessage: string = '';
+  isLoading: boolean = true;
 
   constructor(
     private fixturesService: FixturesService,
     private forecastService: ForecastService,
     private authService: AuthService,
     private toastr: ToastrService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-    const leagues = ['39', '140', '135', '78', '61']; // Las 5 grandes ligas
+    const leagues = ['39', '140', '135', '78', '61'];
     const season = '2023';
 
-    leagues.forEach(leagueId => {
-      this.fixturesService.getFixtures(leagueId, season).subscribe({
-        next: (res) => {
+    const fixtureRequests = leagues.map(leagueId =>
+      this.fixturesService.getFixtures(leagueId, season)
+    );
+
+    forkJoin(fixtureRequests).subscribe({
+      next: (responses) => {
+        responses.forEach((res, index) => {
+          const leagueId = leagues[index];
           if (res && res.response && res.response.length > 0) {
             const leagueName = res.response[0]?.league?.name || 'Desconocida';
-            if (!this.fixturesByLeague[leagueName]) {
-              this.fixturesByLeague[leagueName] = [];
-            }
-            this.fixturesByLeague[leagueName].push(...res.response);
-
-            // Cargar votos para cada partido
+            this.fixturesByLeague[leagueName] = res.response; // Asignar directamente
+            console.log(`Partidos cargados para liga ${leagueName}:`, res.response.length, 'partidos');
             res.response.forEach((game: Game) => {
-              if (game?.fixture?.id) {
-                this.loadVotes(game.fixture.id);
-              }
+              console.log(`Partido ID: ${game.fixture.id}, Equipos: ${game.teams.home.name} vs ${game.teams.away.name}`);
             });
           } else {
             console.warn(`No se encontraron datos para la liga ${leagueId}`);
           }
-        },
-        error: (err) => {
-          console.error('Error fetching fixtures:', err);
-          this.toastr.error('Error al cargar los partidos: ' + (err.error?.message || 'Error desconocido'));
-        }
-      });
+        });
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error al obtener partidos:', err);
+        this.toastr.error('Error al cargar los partidos: ' + (err.error?.message || 'Error desconocido'));
+        this.isLoading = false;
+      }
     });
 
-    // Cargar votos previos del usuario
     this.loadUserVotes();
   }
 
@@ -106,11 +100,6 @@ export class FixturesComponent implements OnInit {
     return this.openLeagues.has(leagueName);
   }
 
-  /**
-   * Método para enviar pronóstico (1X2)
-   * @param game Objeto del partido
-   * @param result '1', 'X' o '2'
-   */
   sendForecast(game: Game, result: string): void {
     const currentUser = this.authService.getCurrentUser();
     if (!currentUser) {
@@ -130,8 +119,8 @@ export class FixturesComponent implements OnInit {
 
     const gameData = {
       game_id: game.fixture.id,
-      localTeamName: game.teams.home.name, // Ajustado al nombre esperado por el backend
-      awayTeamName: game.teams.away.name,  // Ajustado al nombre esperado por el backend
+      localTeamName: game.teams.home.name,
+      awayTeamName: game.teams.away.name,
       date: game.fixture.date,
       competition: game.league.name
     };
@@ -140,8 +129,8 @@ export class FixturesComponent implements OnInit {
       next: () => {
         this.sendingForecast = false;
         this.toastr.success('Pronóstico enviado correctamente');
-        this.userVotes.add(game.fixture.id); // Marcar como votado
-        this.loadVotes(game.fixture.id); // Recargar votos para actualizar porcentajes
+        this.userVotes.add(game.fixture.id);
+        this.loadVotes(game.fixture.id);
       },
       error: (err) => {
         this.sendingForecast = false;
@@ -153,34 +142,33 @@ export class FixturesComponent implements OnInit {
     });
   }
 
-  /**
-   * Carga los votos y porcentajes para un partido
-   * @param gameId ID del partido
-   */
   loadVotes(gameId: number): void {
+    console.log(`Cargando votos para el partido ID: ${gameId}`);
     this.forecastService.getVotes(gameId).subscribe({
       next: (data: VoteData) => {
+        console.log(`Votos recibidos para ${gameId}:`, data);
         this.votesByGame[gameId] = data;
       },
       error: (err) => {
-        console.error('Error cargando votos:', err);
-        this.toastr.error('Error al cargar los votos: ' + (err.error?.message || 'Error desconocido'));
+        if (err.status === 404) {
+          console.warn(`No se encontraron votos para el partido ID ${gameId}`);
+          this.votesByGame[gameId] = { votes: { '1': 0, 'X': 0, '2': 0 }, percentages: { '1': 0, 'X': 0, '2': 0 }, totalVotes: 0 };
+        } else {
+          console.error('Error cargando votos:', err);
+          this.toastr.error('Error al cargar los votos: ' + (err.error?.message || 'Error desconocido'));
+        }
       }
     });
   }
 
-  /**
-   * Carga los partidos en los que el usuario ya votó
-   */
   loadUserVotes(): void {
     const currentUser = this.authService.getCurrentUser();
     if (!currentUser) {
       return;
     }
-    // Asume que tienes un endpoint en ForecastService para obtener los votos del usuario
     this.forecastService.getUserVotes().subscribe({
       next: (votes: number[]) => {
-        this.userVotes = new Set(votes); // Asume que el backend devuelve un array de game IDs
+        this.userVotes = new Set(votes);
       },
       error: (err) => {
         console.error('Error cargando votos del usuario:', err);
@@ -189,10 +177,6 @@ export class FixturesComponent implements OnInit {
     });
   }
 
-  /**
-   * Verifica si el usuario ya votó en un partido
-   * @param gameId ID del partido
-   */
   hasVoted(gameId: number): boolean {
     return this.userVotes.has(gameId);
   }

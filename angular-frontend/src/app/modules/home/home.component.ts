@@ -20,11 +20,10 @@ export class HomeComponent implements OnInit {
   publications: Publication[] = [];
   activatioSection: string = 'feed';
   isLiked = false;
+  isLikedMap: { [publicationId: number]: boolean } = {};
 
-  toggleLike() {
-    if (!this.isLiked) {
-      this.isLiked = true;
-    }
+  toggleLike(pubId: number) {
+    this.isLikedMap[pubId] = !this.isLikedMap[pubId];
   }
   user: User | null = null;
   userId: number = 0;
@@ -260,6 +259,7 @@ export class HomeComponent implements OnInit {
 
   logout() {
     this.authService.logout();
+    this.toastr.success('Has cerrado sesión exitosamente');
   }
 
   // Variable para controlar qué sección mostrar en móvil

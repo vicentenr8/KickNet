@@ -140,14 +140,14 @@
           />
           <div class="flex items-center gap-5 mt-2 text-gray-400">
             <button
-              (click)="toggleLike()"
+              (click)="toggleLike(pub.id!)"
               class="transition-transform duration-300 ease-in-out "
               [ngClass]="{
-                'scale-125 text-red-500': isLiked,
-                'font-semibold hover:text-red-500 cursor-pointer' : !isLiked
+                'scale-125 text-red-500': isLikedMap[pub.id!],
+                'font-semibold hover:text-red-500 cursor-pointer' : !isLikedMap[pub.id!]
               }"
             >
-              <i [ngClass]="isLiked ? 'fas fa-heart' : 'far fa-heart'"></i>
+              <i [ngClass]="isLikedMap[pub.id!] ? 'fas fa-heart' : 'far fa-heart'"></i>
             </button>
             <button
               (click)="openCommentModal(pub)"
