@@ -11,7 +11,7 @@ export class FixturesService {
   private apiUrl = 'https://v3.football.api-sports.io/fixtures';
   private headers = new HttpHeaders({
     'x-rapidapi-host': 'v3.football.api-sports.io',
-    'x-rapidapi-key': '6f1093b225adc776e36107c1414094ee'
+    'x-rapidapi-key': 'f5fe4b02610aa1ea9c07a326a30802c5'
   });
 
   constructor(private http: HttpClient) { }

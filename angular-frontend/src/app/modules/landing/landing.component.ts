@@ -63,7 +63,12 @@ export class LandingComponent {
             return;
           }
           console.error('Error en login', err);
+          if(this.loginEmail && err.status === 403) {
+            this.toastr.warning('Email no verificado, por favor verifica tu correo electrónico');
+            return;
+          }
         }
+       
       });
   }
 

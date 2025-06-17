@@ -42,10 +42,10 @@ export class HomeComponent implements OnInit {
     private commentService: CommentService,
     private toastr: ToastrService
   ) {
-    this.user = this.authService.getCurrentUser();
   }
 
   ngOnInit() {
+    this.user = this.authService.getCurrentUser();
     this.loadPublications();
     if (this.user) {
       this.userId = this.user.id;
