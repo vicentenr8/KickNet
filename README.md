@@ -29,7 +29,7 @@ Kicknet es una red social centrada exclusivamente en el fútbol, que permite a l
 
 **Clonar el repositorio**
    ```bash
-git clone https://github.com/tuusuario/kicknet-backend.git
+git clone https://github.com/vicentenr8/kicknet-backend.git
 cd kicknet-backend
  ```
 
